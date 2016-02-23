@@ -1,0 +1,5 @@
+NDN.p4 is a partial implementation of the NDN protocol written in P4.
+
+NDN.p4 can be used to program the open source software-switch provided at https://github.com/p4lang and tested using mini-ndn, which is a fork of Mininet to emulate an NDN network on a single system.
+
+Details on how to use the code and reproduce the tests are coming soon!!!

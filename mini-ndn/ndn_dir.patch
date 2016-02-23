@@ -1,0 +1,106 @@
+diff --git ndn/conf_parser.py ndn/conf_parser.py
+index a351a68..0e463d3 100644
+--- ndn/conf_parser.py
++++ ndn/conf_parser.py
+@@ -1,4 +1,4 @@
+-# -*- Mode:python; c-file-style:"gnu"; indent-tabs-mode:nil -*- */
++#: -*- Mode:python; c-file-style:"gnu"; indent-tabs-mode:nil -*- */
+ #
+ # Copyright (C) 2015 The University of Memphis,
+ #                    Arizona Board of Regents,
+@@ -60,6 +60,7 @@
+ 
+ import ConfigParser, re
+ import shlex
++import pdb
+ 
+ class confNDNHost():
+ 
+@@ -146,9 +147,7 @@ def parse_hosts(conf_arq):
+                 app = ""
+             else:
+                 params[uri.split('=')[0]] = uri.split('=')[1]
+-
+         hosts.append(confNDNHost(name, app, params, cpu, cores, cache))
+-
+     return hosts
+ 
+ def parse_switches(conf_arq):
+@@ -174,13 +173,18 @@ def parse_links(conf_arq):
+     arq = open(conf_arq,'r')
+ 
+     links = []
++    noLinks = True
+ 
+     while True:
+         line = arq.readline()
+         if line == '[links]\n':
++	    noLinks = False 
+             break
++	elif line == '[no-links]\n': 
++	    break
++	    
+ 
+-    while True:
++    while True and not noLinks:
+         line = arq.readline()
+         if line == '':
+             break
+diff --git ndn/ndn_host.py ndn/ndn_host.py
+index 15bf245..5520238 100644
+--- ndn/ndn_host.py
++++ ndn/ndn_host.py
+@@ -101,6 +101,8 @@ class NdnHost(Host, NdnHostCommon):
+         self.nfd = Nfd(self)
+         self.nfd.start()
+ 
++	
++
+         self.peerList = {}
+ 
+     def config(self, app=None, cache=None, **params):
+@@ -112,6 +114,17 @@ class NdnHost(Host, NdnHostCommon):
+ 
+         return r
+ 
++    def p4_setting(self):
++	# P4 setting 
++	self.defaultIntf().rename("eth0")
++	for off in ["rx", "tx", "sg"]:
++            cmd = "/sbin/ethtool --offload eth0 %s off" % off
++            self.cmd(cmd)
++	# P4 setting - disable IPv6
++        self.cmd("sysctl -w net.ipv6.conf.all.disable_ipv6=1")
++        self.cmd("sysctl -w net.ipv6.conf.default.disable_ipv6=1")
++        self.cmd("sysctl -w net.ipv6.conf.lo.disable_ipv6=1") 
++
+     def terminate(self):
+         "Stop node."
+         self.nfd.stop()
+diff --git ndn/nlsr.py ndn/nlsr.py
+index 2da0894..a57f0ec 100644
+--- ndn/nlsr.py
++++ ndn/nlsr.py
+@@ -21,6 +21,9 @@
+ # along with Mini-NDN, e.g., in COPYING.md file.
+ # If not, see <http://www.gnu.org/licenses/>.
+ 
++import traceback
++import sys
++
+ from ndn.ndn_application import NdnApplication
+ 
+ class Nlsr(NdnApplication):
+@@ -40,8 +43,10 @@ class Nlsr(NdnApplication):
+         node.cmd("sudo sed -i 's|prefix .*netlab|prefix /ndn/edu/%s|g' %s" % (node.name, self.confFile))
+ 
+     def start(self):
+-        NdnApplication.start(self, "nlsr -d")
+-
++        # NdnApplication.start(self, "nlsr -d")
++	# traceback.print_stack(file=sys.stdout)
++	print("I don't start the application")
++	
+ class NlsrConfigGenerator:
+ 
+     ROUTING_LINK_STATE = "ls"

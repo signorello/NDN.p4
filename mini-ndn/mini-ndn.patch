@@ -1,0 +1,285 @@
+diff --git bin/minindn bin/minindn
+index fd38093..61de71a 100755
+--- bin/minindn
++++ bin/minindn
+@@ -75,7 +75,9 @@ import optparse
+ import datetime
+ from os.path import expanduser
+ import sys
++import pdb
+ 
++from ndn.p4_mininet import P4Switch
+ from ndn.nlsr import Nlsr, NlsrConfigGenerator
+ from ndn.nfd import Nfd
+ 
+@@ -107,6 +109,12 @@ class ProgramOptions:
+         self.workDir = "/tmp"
+         self.resultDir = None
+         self.pctTraffic = 1.0
++	self.p4switch = None
++	#self.behavioral_exe = None
++	#self.json = None
++	#self.thrift_port = 9090
++	#self.pcap_dump = None
++
+ 
+ def createResultsDir(resultDir, faces, hr):
+     if faces == 0:
+@@ -159,6 +167,9 @@ def parse_args():
+     parser.add_option("--nPings", action="store", dest="nPings", type="int", default=300,
+     help="Number of pings to perform between each node in the experiment")
+ 
++    parser.add_option("--P4switch", action="store", dest="p4switch", default=None,
++    help="Path to the P4 switch configuration file")
++
+     parser.add_option("-t", "--testbed", action="store_true", dest="testbed", default=False,
+     help="instantiates NDN Testbed")
+ 
+@@ -174,6 +185,19 @@ def parse_args():
+     parser.add_option('--version', '-V', action='callback', callback=printVersion,
+     help='Displays version information')
+ 
++    #parser.add_option('--behavioral-exe', help='Path to behavioral executable',
++    #                    type=str, action="store") # this option was marked as required in argsParser, not supported by optsParser anymore
++    #parser.add_option('--thrift-port', help='Thrift server port for table updates',
++    #                    type=int, action="store", default=9090)
++    #parser.add_option('--num-hosts', help='Number of hosts to connect to switch',
++    #                    type=int, action="store", default=2)
++    #parser.add_option('--mode', type=str, default='l3') # deleted choices no longer supported with type=str
++    #parser.add_option('--json', help='Path to JSON config file',
++    #                    type=str, action="store")# this option was marked as required in argsParser, not supported by optsParser anymore
++    #parser.add_option('p','--pcap-dump', help='Dump packets on interfaces to pcap files',
++    #                    action="store_true", default=False)# this option was marked as required in argsParser, not supported by optsParser anymore
++    #parser.add_option('l','--log-console', help='Enable P4Switch logging on stdout',
++    #                    dest="stdlog", action="store_true", default=False)
+     (args, arg) = parser.parse_args()
+ 
+     options = ProgramOptions()
+@@ -187,6 +211,18 @@ def parse_args():
+     options.workDir = args.workDir
+     options.resultDir = args.resultDir
+     options.pctTraffic = args.pctTraffic
++    # Parameters for the software switch
++    options.p4switch = args.p4switch
++    #options.behavioral_exe = args.behavioral_exe
++    #options.json = args.json
++    #options.thrift_port = args.thrift_port
++    #options.pcap_dump = args.pcap_dump
++    #options.mode = args.mode
++    #options.std_log = args.stdlog
++
++    if options.p4switch is not None and not os.path.isfile(options.p4switch):
++	print("There exist no configuration file at %s" % options.p4switch)
++        sys.exit()
+ 
+     if options.experimentName is not None and options.experimentName not in ExperimentManager.getExperimentNames():
+         print("No experiment named %s" % options.experimentName)
+@@ -203,9 +239,10 @@ def parse_args():
+     return options
+ 
+ class NdnTopo(Topo):
+-    def __init__(self, conf_arq, workDir, **opts):
++    #def __init__(self, conf_arq, workDir, p4switch, sw_path, json_path, thrift_port, pcap_dump, std_log, **opts):
++    def __init__(self, conf_arq, workDir, p4switch, **opts):
+         Topo.__init__(self, **opts)
+-
++	print "Loading topology file %s" % conf_arq
+         global hosts_conf
+         global links_conf
+         hosts_conf = parse_hosts(conf_arq)
+@@ -215,13 +252,34 @@ class NdnTopo(Topo):
+         self.isTCLink = False
+         self.isLimited = False
+ 
++	h = 0
++	hosts = []
+         for host in hosts_conf:
++	    h += 1
+             if host.cpu != None and self.isLimited != True:
+                 self.isLimited = True
+-            self.addHost(host.name, app=host.app, params=host.uri_tuples, cpu=host.cpu,cores=host.cores,cache=host.cache, workdir=workDir)
++	    if p4switch is not None:
++	        hosts.append( self.addHost(host.name,
++	                            ip = "10.0.%d.10/24" % h,
++	                            mac = '00:04:00:00:00:%02x' %h,app=host.app, params=host.uri_tuples, cpu=host.cpu,cores=host.cores,cache=host.cache, workdir=workDir))
++	    else:
++	        self.addHost(host.name, app=host.app, params=host.uri_tuples, cpu=host.cpu,cores=host.cores,cache=host.cache, workdir=workDir)
+ 
+         for switch in switches_conf:
+-            self.addSwitch(switch.name)
++	    # adding a P4 switch that connects the ndn nodes
++	    if p4switch is not None:
++	        switch = self.addSwitch(switch.name,
++                               config_path = p4switch)
++                               #json_path = json_path,
++                               #thrift_port = thrift_port,
++                               #pcap_dump = pcap_dump,
++			       #verbose = std_log)
++	    
++	        for h in hosts:
++		  self.addLink(h, switch)
++	    else:
++		self.addSwitch(switch.name)
++
+ 
+         for link in links_conf:
+             if len(link.linkDict) == 0:
+@@ -250,75 +308,107 @@ def execute(options):
+ 
+     # Update nfd.conf file used by Mini-NDN to match the currently installed version of NFD
+     nfdConfFile = "%s/nfd.conf" % install_dir
+-    os.system("sudo cp /usr/local/etc/ndn/nfd.conf.sample %s" % nfdConfFile)
++    os.system("sudo cp /usr/local/etc/ndn/nfd.conf %s" % nfdConfFile)
+     os.system("sudo sed -i \'s|default_level [A-Z]*$|default_level $LOG_LEVEL|g\' %s" % nfdConfFile)
+ 
+     if options.resultDir is not None:
+         options.resultDir = createResultsDir(options.resultDir, options.nFaces, options.hr)
+ 
+-    topo = NdnTopo(template_file, options.workDir)
++    topo = NdnTopo(template_file, 
++		   options.workDir,
++		   options.p4switch)
++		  # options.behavioral_exe,
++		  # options.json,
++		  # options.thrift_port,
++		  # options.pcap_dump,
++		  # options.std_log)
+ 
+     t = datetime.datetime.now()
+ 
+-    if topo.isTCLink == True and topo.isLimited == True:
+-        net = Mininet(topo,host=CpuLimitedNdnHost,link=TCLink)
+-    elif topo.isTCLink == True and topo.isLimited == False:
+-        net = Mininet(topo,host=NdnHost,link=TCLink)
+-    elif topo.isTCLink == False and topo.isLimited == True:
+-        net = Mininet(topo,host=CpuLimitedNdnHost)
+-    else:
+-        net = Mininet(topo,host=NdnHost)
++    #if topo.isTCLink == True and topo.isLimited == True:
++    #    net = Mininet(topo,host=CpuLimitedNdnHost,link=TCLink)
++    #elif topo.isTCLink == True and topo.isLimited == False:
++    #    net = Mininet(topo,host=NdnHost,link=TCLink)
++    #elif topo.isTCLink == False and topo.isLimited == True:
++    #    net = Mininet(topo,host=CpuLimitedNdnHost)
++    #else:
++    net = Mininet(topo,host=NdnHost,switch = P4Switch,controller=None)
+ 
++    # TODO: we have to call the p4_setting() function on each node
+     t2 = datetime.datetime.now()
+ 
+     delta = t2 - t
+ 
+     info('Setup time: ' + str(delta.seconds) + '\n')
+ 
++    for host in net.hosts:
++      host.p4_setting()
++
+     net.start()
+ 
+-    # Giving proper IPs to intf so neighbor nodes can communicate
+-    # This is one way of giving connectivity, another way could be
+-    # to insert a switch between each pair of neighbors
+-    ndnNetBase = "1.0.0.0"
+-    interfaces = []
+-    for host in net.hosts:
+-        for intf in host.intfList():
+-            link = intf.link
+-            node1, node2 = link.intf1.node, link.intf2.node
++    if options.p4switch is not None:
++       # Providing addresses to reach the switch interfaces (copied by 1stDemo.py)
++       sw_mac = ["00:aa:bb:00:00:%02x" % (n + 1) for n in xrange(len(net.hosts))]
+ 
+-            if node1 in net.switches or node2 in net.switches:
+-                continue
++       sw_addr = ["10.0.%d.1" % (n + 1) for n in xrange(len(net.hosts))]
+ 
+-            if link.intf1 not in interfaces and link.intf2 not in interfaces:
+-                interfaces.append(link.intf1)
+-                interfaces.append(link.intf2)
+-                node1.setIP(ipStr(ipParse(ndnNetBase) + 1) + '/30', intf=link.intf1)
+-                node2.setIP(ipStr(ipParse(ndnNetBase) + 2) + '/30', intf=link.intf2)
+-                ndnNetBase = ipStr(ipParse(ndnNetBase) + 4)
++       n = 0
+ 
++       switch = net.switches[0]
++       #assert type(switch) is P4Switch, "The switch loaded is not a P4 Switch"
++       assert isinstance(switch,P4Switch), "The switch loaded is not a P4 Switch"
++       for h in net.hosts:
++           if switch.mode == "l2":
++               h.setDefaultRoute("dev eth0")
++           else:
++               h.setARP(sw_addr[n], sw_mac[n])
++               h.setDefaultRoute("dev eth0 via %s" % sw_addr[n])
++	   n+=1
++
++    else:
++      # Giving proper IPs to intf so neighbor nodes can communicate
++      # This is one way of giving connectivity, another way could be
++      # to insert a switch between each pair of neighbors
++      ndnNetBase = "1.0.0.0"
++      interfaces = []
++      for host in net.hosts:
++          for intf in host.intfList():
++              link = intf.link
++              node1, node2 = link.intf1.node, link.intf2.node
++
++              if node1 in net.switches or node2 in net.switches:
++                  continue
++
++              if link.intf1 not in interfaces and link.intf2 not in interfaces:
++                  interfaces.append(link.intf1)
++                  interfaces.append(link.intf2)
++                  node1.setIP(ipStr(ipParse(ndnNetBase) + 1) + '/30', intf=link.intf1)
++                  node2.setIP(ipStr(ipParse(ndnNetBase) + 2) + '/30', intf=link.intf2)
++                  ndnNetBase = ipStr(ipParse(ndnNetBase) + 4)
++
++    
+     nodes = ""    # Used later to check prefix name in checkFIB
+ 
+-    # NLSR initialization
+-    for host in net.hosts:
+-        nodes += str(host.name) + ","
++   # # NLSR initialization
++   # for host in net.hosts:
++   #     nodes += str(host.name) + ","
+ 
+-        conf = next(x for x in hosts_conf if x.name == host.name)
+-        host.nlsrParameters = conf.nlsrParameters
++   #     conf = next(x for x in hosts_conf if x.name == host.name)
++   #     host.nlsrParameters = conf.nlsrParameters
+ 
+-        if options.nFaces is not None:
+-            host.nlsrParameters["max-faces-per-prefix"] = options.nFaces
++   #     if options.nFaces is not None:
++   #         host.nlsrParameters["max-faces-per-prefix"] = options.nFaces
+ 
+-        if options.hr is True:
+-            host.nlsrParameters["hyperbolic-state"] = "on"
++   #     if options.hr is True:
++   #         host.nlsrParameters["hyperbolic-state"] = "on"
+ 
+-        # Generate NLSR configuration file
+-        configGenerator = NlsrConfigGenerator(host)
+-        configGenerator.createConfigFile()
++   #     # Generate NLSR configuration file
++   #     configGenerator = NlsrConfigGenerator(host)
++   #     configGenerator.createConfigFile()
+ 
+-        # Start NLSR
+-        host.nlsr = Nlsr(host)
+-        host.nlsr.start()
++   #     # Start NLSR
++   #     host.nlsr = Nlsr(host)
++   #     host.nlsr.start()
+ 
+     nodes = nodes[0:-1]
+ 
+@@ -365,8 +455,6 @@ if __name__ == '__main__':
+ 
+     hosts_conf = []
+     links_conf = []
+-
+     options = parse_args()
+-
+     setLogLevel('info')
+     execute(options)

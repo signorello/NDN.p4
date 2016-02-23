@@ -1,0 +1,15 @@
+table_set_default count_table storeNumOfComponents 0
+table_add count_table storeNumOfComponents 1 0 0 0 0 => 1
+table_add count_table storeNumOfComponents 1 1 0 0 0 => 2
+table_add count_table storeNumOfComponents 1 1 1 0 0 => 3
+table_add count_table storeNumOfComponents 1 1 1 1 0 => 4
+table_add count_table storeNumOfComponents 1 1 1 1 1 => 5
+table_set_default hashName_table computeStoreTablesIndex
+table_add pit_table readPitEntry 0x05 => 
+table_add pit_table cleanPitEntry 0x06 =>
+table_set_default fib_table _drop
+table_add updatePit_table updatePit_entry 1 =>
+table_add updatePit_table _drop 0 =>
+table_add routeData_table setOutputIface 1 => 0
+table_add routeData_table setOutputIface 2 => 1
+table_set_default routeData_table _drop
