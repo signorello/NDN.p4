@@ -5,15 +5,17 @@ from os.path import expanduser
 from crcmod.predefined import *
 import sys
 import crcmod.predefined
+import pdb
 
 table_name = "fib_table"
 action_name = "set_egr"
 max_components = 4
+hash_function = "crc-16"
 
 def parse_args():
-    usage = """Usage: createFIBrules --fib fib.txt --cmd commands.txt [-t table_name] [-a action_name] [-c max_components]
+    usage = """Usage: createFIBrules --fib fib.txt --cmd commands.txt [-t table_name] [-a action_name] [-c max_components] [-f has_function]
     fib.txt contains the FIB entries listed into separate lines
-    commands.txt is the ouput file the produced command rule will be appended to
+    commands.txt is the ouput file the produced command rules will be appended to
     """
 
     parser = argparse.ArgumentParser(usage)
@@ -28,6 +30,8 @@ def parse_args():
                             type=str, action="store", dest="action_name")
     parser.add_argument('-c', help='max number of name components supported by the device to be programmed',
                             type=int, action="store", dest="max_components")
+    parser.add_argument('-f', help='function used to compute an hash of the full name, default is crc16',
+                            type=str, action="store", dest="hash_function")
 
     return parser.parse_args()
 
@@ -63,15 +67,30 @@ def process_entry(entry, out_file):
     name_components.pop()
     name_components.reverse()
 
+
     prefix_ncomp = len(name_components)
 
-    hash_name = compute_hash(name,name_components) 
+    str_position = 0
+    binary_mask = ''
+    #pdb.set_trace()
+    # if there is an asterisk at the end of the rule, then this is a full name:
+    # does it change anything? right now, it doesn't
+    if (len(rule) == 3 and rule[2] == '*' and hash_function != 'crc-16'):
+      hash_name = compute_hash(name_components,hash_function) 
+      str_position = max_components - 1
+      binary_mask = '&&&0xffffffff'
+    else:
+      hash_name = compute_hash(name_components,'crc-16') 
+      str_position = prefix_ncomp - 1
+      binary_mask = '&&&0xffff'
+
+
     needed = max_components - prefix_ncomp + 1
     i=0
     ternary_mask = '0&&&0 '
     masks_str = ''.join(ternary_mask * max_components)
     masks = masks_str.split(" ")
-    masks[prefix_ncomp - 1] = str(hash_name) + '&&&0xffff'
+    masks[str_position] = "0x%x%s" % (hash_name, binary_mask)
     masks.pop()
     masks_str = " ".join(masks)
     
@@ -85,13 +104,12 @@ def process_entry(entry, out_file):
 # I'm making it simple, indeed it should be more complicated, i.e.,
 # computing crc32 on the whole name and smaller hashes on the shorter
 # prefix-names
-# I should parametrize such function so to take the algorithm type as arguments too
-def compute_hash(name, name_components):
-    crc16 = crcmod.predefined.mkCrcFun('crc-16')
-    return crc16("".join(name_components))
+def compute_hash(name_components,function):
+    crc = crcmod.predefined.mkCrcFun(function)
+    return crc("".join(name_components))
 
 def main():
-    global table_name, action_name, max_components
+    global table_name, action_name, max_components, hash_function 
 
     args = parse_args()
     if args.table_name is not None:

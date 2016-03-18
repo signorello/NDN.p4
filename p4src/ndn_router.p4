@@ -54,8 +54,8 @@ field_list_calculation name_hash {
     input {
         name_components_f;
     }
-    algorithm : crc32;
-    output_width : 32;
+    algorithm : crc16;
+    output_width : 16;
 }
 
 field_list_calculation chash1 {

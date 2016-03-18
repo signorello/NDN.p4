@@ -29,9 +29,9 @@ along with NDN.p4.  If not, see <http://www.gnu.org/licenses/>.
 //              METADATA	     //
 /*************************************/
 
-header_type name_metadata_t{
+header_type name_metadata_t {
     fields{
-	name_hash : 32;
+	name_hash : 16;
 	namesize : 8;
 	namemask : 16;
 	tmp : 8;
@@ -45,11 +45,10 @@ header_type components_metadata_t {
 	c2 : 16;
 	c3 : 16;
 	c4 : 16;
-	c5 : 16; 
     }
 }
 
-header_type stupid_metadata_t{
+header_type stupid_metadata_t {
     fields{
 	small_mask : 64;
         medium_mask : 64;
@@ -58,13 +57,13 @@ header_type stupid_metadata_t{
     }
 }
 
-header_type ingress_metadata_t{
+header_type ingress_metadata_t {
   fields {
     tmp : 8;
   }
 }
 
-header_type flow_metadata_t{
+header_type flow_metadata_t {
   fields {
     isInPIT : 8;
     hasFIBentry : 8;

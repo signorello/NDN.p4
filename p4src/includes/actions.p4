@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with NDN.p4.  If not, see <http://www.gnu.org/licenses/>.
 */
 register pit_r{
-  width : 32;
+  width : 16;
   static : pit_table;
   instance_count : 66536;
 }
