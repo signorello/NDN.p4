@@ -1,7 +1,7 @@
-diff --git ndn/conf_parser.py ndn/conf_parser.py
+diff --git a/ndn/conf_parser.py b/ndn/conf_parser.py
 index a351a68..0e463d3 100644
---- ndn/conf_parser.py
-+++ ndn/conf_parser.py
+--- a/ndn/conf_parser.py
++++ b/ndn/conf_parser.py
 @@ -1,4 +1,4 @@
 -# -*- Mode:python; c-file-style:"gnu"; indent-tabs-mode:nil -*- */
 +#: -*- Mode:python; c-file-style:"gnu"; indent-tabs-mode:nil -*- */
@@ -46,15 +46,28 @@ index a351a68..0e463d3 100644
          line = arq.readline()
          if line == '':
              break
-diff --git ndn/ndn_host.py ndn/ndn_host.py
-index 15bf245..5520238 100644
---- ndn/ndn_host.py
-+++ ndn/ndn_host.py
+diff --git a/ndn/experiments/experiment.py b/ndn/experiments/experiment.py
+index 385ff2a..1bf8cc7 100644
+--- a/ndn/experiments/experiment.py
++++ b/ndn/experiments/experiment.py
+@@ -107,7 +107,7 @@ class Experiment:
+     def recoverNode(self, host):
+         print("Bringing %s up" % host.name)
+         host.nfd.start()
+-        host.nlsr.start()
++        # host.nlsr.start()
+         host.nfd.setStrategy("/ndn/edu", self.strategy)
+         host.cmd("ndnpingserver /ndn/edu/" + str(host) + " > ping-server &")
+ 
+diff --git a/ndn/ndn_host.py b/ndn/ndn_host.py
+index 15bf245..5f8acbc 100644
+--- a/ndn/ndn_host.py
++++ b/ndn/ndn_host.py
 @@ -101,6 +101,8 @@ class NdnHost(Host, NdnHostCommon):
          self.nfd = Nfd(self)
          self.nfd.start()
  
-+	
++	#self.p4_setting()
 +
          self.peerList = {}
  
@@ -77,10 +90,10 @@ index 15bf245..5520238 100644
      def terminate(self):
          "Stop node."
          self.nfd.stop()
-diff --git ndn/nlsr.py ndn/nlsr.py
+diff --git a/ndn/nlsr.py b/ndn/nlsr.py
 index 2da0894..a57f0ec 100644
---- ndn/nlsr.py
-+++ ndn/nlsr.py
+--- a/ndn/nlsr.py
++++ b/ndn/nlsr.py
 @@ -21,6 +21,9 @@
  # along with Mini-NDN, e.g., in COPYING.md file.
  # If not, see <http://www.gnu.org/licenses/>.

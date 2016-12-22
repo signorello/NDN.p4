@@ -1,5 +1,65 @@
-NDN.p4 is a partial implementation of the NDN protocol written in P4.
+Requirements
+-----------------------------------------
 
-NDN.p4 can be used to program the open source software-switch provided at https://github.com/p4lang and tested using mini-ndn, which is a fork of Mininet to emulate an NDN network on a single system.
+- Minindn
+Download minindn at https://github.com/named-data/mini-ndn
+You can follow the instructions in the INSTALL.md of the minindn package that lists all the required packages on your machine. Typically, you need to have a working NDN environment, e.g., NFD, NLSR and some ndn utilities.
 
-Details on how to use the code and reproduce the tests are coming soon!!!
+- P4 bmv2 a.k.a. P4 software-switch
+You may avoid downloading and running a P4 compiler for the bmv2 target, because a compiled version in json format of the ndn_router.p4 source files is shipped with this software. However, you need to download and compile the P4 bmv2.
+Download the bmv2 at https://github.com/p4lang/behavioral-model and follow instructions therein.
+
+Changes to mini-ndn
+-----------------------------------------
+Follows a quick description of the changes and adds applied to the minindn installation. Further explanation of the patch files is included in a README within the subdir mini-ndn.
+
+The nlsr is commented out and not launched at boot on the ndn nodes.
+
+Some settings imported from the p4_mininet test environemnt are applied to the ndn hosts in file in ndn_host.py
+
+Those changes are included as two different patch files in NDN.p4 The file 'mini-ndn.patch' must be applied to the main dir of mini-ndn. While the file ndn_dir.patch must be applied to the ndn directory.
+
+Additional files to be included in mini-ndn
+------------------------------------------
+
+- ndn/experiments/my_experiment.py : it describes a basic experiment to be run in the topology. The experiment consists of two nodes exchanging an Interest and a Data packet by using ndnpeek and ndnpoke application. The code is pretty easy to follow. It includes some set-up to be done for the first node, on which some routes need to be installed. Then, in the run method the ndnpeek and ndnpoke calls are instantiated on different host nodes.
+
+- ndn/ndnP4_demo.py : this file is provided within the p4-lang repository by Barefoot Networks. It's not actually in use, but it has been included to track some code that has been leveraged in our mininet setup.
+
+- ndn/p4_mininet.py : the template this file is based on is likely the bmv2/mininet/p4_mininet.py. However, it includes more things. First, there is a parseConfig method to read and parse the attributes specified in the p4-switch.conf. While in the original file, P4Switch's arguments were passed as parameters to the class constructor. Second, there is a method that fills the P4-switch's tables. Third, the original version of this file defined classes P4Host and P4Switch, now it defines only a custom version of P4Switch, since the ndn node class is used to instantiate hosts. 
+
+- p4-switch.conf : it includes arguments that are usually passed to the switch executable as well as the path to the executable itself. (I wonder if the cmd line eventually hadn't worked and so I later moved to a solution with this configuration file.)
+
+
+P4 switch configuration file
+-----------------------------------------
+The "p4-switch.conf" file contains arguments loaded by the experiment at run-time that are used to tailor the p4-switch behavior. You MUST edit it in order to modify the paths to files on your file system. Every line contains a small comment after the semicolon explaining the field meaning.
+
+
+Experiment topology description
+-----------------------------------------
+The simple topology used for this experiment is described in the p4.ndn.basic.conf. It consists of two hosts running NFD and a switch connecting them which runs the ndn_router.p4 program.
+
+
+Configuration file for NFD
+----------------------------------------
+The directory includes the configuration file used for the experiment, while it is not mandatory to use the same configuration file, it is recommended for people who don't know how to troubleshoot problems with the NFD. If there exists some configuration parameter which is not supported in your system, the NFD may crash and so the experiment fails.
+
+Translate your own rule-set
+---------------------------------------
+Human-readable prefixes must be translated in p4-switch's rule by the createFIBrules.py script. As an example, we have included an incomplete "ndn_commands.partial.txt" rule-set that has all the forwarding plane rules except the FIB's ones. In addition to that, there is a bare simple illustrative file "fib.txt" that includes three rules (syntax: prefix output_interface). To convert those rules to commands that can be used to fill the p4-switch's FIB, you may proceed as follows:
+
+python createFIBrules.py --fib fib.txt --cmd ndn_commands.partial.txt -c 5
+
+The '-c' specifies what is the maximum number of name components the switch is able to parse in NDN packets. In our code this is a constant in the *.p4 files which is set to 5. If you want to change this value, you need to modify the source files and compile them again to generate a new json file to be loaded by the p4-switch.
+
+The rules contained in fib.txt are translated into commands and appended to the ndn_commands.partial.txt. Then, this file has to be linked into the p4-switch.conf under the attribute "commands" as follows 
+
+commands: $ABSOLUTE_PATH/ndn_commands.partial.txt ; Path to the control plane rules as to fill the switch's tables
+
+Start the experiment
+-----------------------------------------
+sudo minindn $MININDN/p4.ndn.basic.conf --experiment=P4_NDN_experiment --p4
+
+Few seconds after the experiment is started, you are prompted to the mininet CLI. If the experiment was run successfully, you should have the content "Hello world" written in the file /tmp/a/packetPayload.txt. The text is the payload of the content object retrieved by node 'a' through the ndnpeek utility and provided by node 'b' through the ndnpoke utility.
+You can check how NDN packets are processed by the p4 switch, which runs the ndn_router.p4 program, by looking at the log in 'p4s.s1.log'.

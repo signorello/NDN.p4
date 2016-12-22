@@ -33,7 +33,7 @@ class P4Switch(Switch):
                   device_id = None,
                   **kwargs ):
         Switch.__init__( self, name, **kwargs )
-	self.parseConfig( config_path )
+	#self.parseConfig( config_path )
         logfile = '/tmp/p4s.%s.log' % self.name
         self.output = open(logfile, 'w')
         if device_id is not None:
@@ -83,7 +83,8 @@ class P4Switch(Switch):
 
     def fillTables( self ):
 	print ("Filling switch tables using %s" % self.commands )
-	res = self.cmd("python ~/p4/bmv2/targets/simple_switch/runtime_CLI --json ~/p4/p4factory/targets/ndn_router/p4src/ndn_router.json < %s" % self.commands)
+	#res = self.cmd("python ~/p4/bmv2/targets/simple_switch/runtime_CLI --json ~/p4/p4factory/targets/ndn_router/p4src/ndn_router.json < %s" % self.commands)
+	res = self.cmd("python %s --json %s < %s" % (self.cli_path, self.json_path, self.commands))
 	print res
 
     def dropIPv6( self ):
@@ -109,14 +110,16 @@ class P4Switch(Switch):
         assert(0)
 
     def parseConfig( self, config_path ):
+        print "Reading config file ", config_path
 	config = ConfigParser.RawConfigParser()
 	config.read(config_path)
         self.sw_path = config.get('basic', 'exe')
         self.json_path = config.get('basic', 'json')
+        self.cli_path = config.get('basic', 'cli')
 	assert(self.json_path), "The p4 switch cannot be started without a valid json file as argument"
         self.mode = config.get('basic', 'mode')
         self.thrift_port = config.get('basic', 'thrift-port')
         self.pcap_dump = config.getboolean('basic', 'pcap-dump')
         self.verbose = config.getboolean('basic', 'verbose')
         self.commands = config.get('basic', 'commands')
-	print '%s %s %s %s %s %s %s' % (self.sw_path, self.json_path, self.mode, self.thrift_port, self.pcap_dump, self.verbose, self.commands)
+	print '%s %s %s %s %s %s %s %s' % (self.sw_path, self.cli_path, self.json_path, self.mode, self.thrift_port, self.pcap_dump, self.verbose, self.commands)

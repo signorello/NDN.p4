@@ -5,7 +5,6 @@ from os.path import expanduser
 from crcmod.predefined import *
 import sys
 import crcmod.predefined
-import pdb
 
 table_name = "fib_table"
 action_name = "set_egr"
@@ -72,7 +71,6 @@ def process_entry(entry, out_file):
 
     str_position = 0
     binary_mask = ''
-    #pdb.set_trace()
     # if there is an asterisk at the end of the rule, then this is a full name:
     # does it change anything? right now, it doesn't
     if (len(rule) == 3 and rule[2] == '*' and hash_function != 'crc-16'):

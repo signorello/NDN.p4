@@ -1,0 +1,18 @@
+This readme briefly describes the changes included in the two patch files to be applied to mini-ndn.
+
+ndn_dir.patch
+----------------------
+This patch includes changes to files of the subdir ndn in the minindn directory structure.
+
+- ndn/conf_parser.py : the new version includes a small change to parse a custom configuration file where no-links are specified
+
+- ndn/experiments/experiment.py : the new version comments out the line that starts the nlsr daemon on hosts
+
+- ndn/ndn_host.py : the new version includes setting to turn down IPv6 on hosts, those settings were previously applied to the P4Host class found in the mininet demo within the P4-lang repository.
+
+- ndn/nlsr.py : the new version comments out the start of the nlsr daemon too, since the daemon kept starting anyway even after the change in the ndn_host.py
+
+
+mini-ndn.patch
+---------------------
+This patch includes changes to the minindn script within the bin directory.
