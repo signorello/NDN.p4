@@ -18,7 +18,7 @@ along with NDN.p4.  If not, see <http://www.gnu.org/licenses/>.
 register pit_r{
   width : 16;
   static : pit_table;
-  instance_count : 66536;
+  instance_count : 65536;
 }
 
 action set_egr(egress_spec) {
@@ -74,4 +74,9 @@ action setOutputIface(out_iface) {
     // modify_field(standard_metadata.egress_spec, flow_metadata.isInPIT);
     // currently hard-coded values limited to 8 output interfaces - from 0 to 7
     modify_field(standard_metadata.egress_spec, out_iface);
+}
+
+action rewrite_macs(dmac, smac) {
+    modify_field(ethernet.dstAddr, dmac);
+    modify_field(ethernet.srcAddr, smac);
 }

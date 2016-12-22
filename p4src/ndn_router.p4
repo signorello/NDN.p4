@@ -187,6 +187,18 @@ control ingress {
     }
 }
 
+table send_packet_table {
+    reads {
+        standard_metadata.egress_port: exact;
+    }
+    actions {
+        rewrite_macs;
+        _drop;
+    }
+    size: 256;
+}
+
 control egress {
     // may be a future place for caching logic
+    apply(send_packet_table);
 }

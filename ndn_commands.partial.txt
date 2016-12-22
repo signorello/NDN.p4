@@ -13,3 +13,6 @@ table_add updatePit_table _drop 0 =>
 table_add routeData_table setOutputIface 1 => 0
 table_add routeData_table setOutputIface 2 => 1
 table_set_default routeData_table _drop
+table_set_default send_packet_table _drop
+table_add send_packet_table rewrite_macs 1 => 00:04:00:00:00:01 00:0a:00:00:00:01
+table_add send_packet_table rewrite_macs 2 => 00:04:00:00:00:02 00:0a:00:00:00:01
