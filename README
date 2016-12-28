@@ -1,7 +1,7 @@
 Requirements
 -----------------------------------------
 
-- Minindn
+- Minindn (The demo was tested on mininet ver 2.2.1 and mini-ndn version 0.1.1)
 Download minindn at https://github.com/named-data/mini-ndn
 You can follow the instructions in the INSTALL.md of the minindn package that lists all the required packages on your machine. Typically, you need to have a working NDN environment, e.g., NFD, NLSR and some ndn utilities.
 
