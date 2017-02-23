@@ -3,7 +3,7 @@ Requirements
 
 - Minindn (The demo was tested on mininet ver 2.2.1 and mini-ndn version 0.1.1)
 Download minindn at https://github.com/named-data/mini-ndn
-You can follow the instructions in the INSTALL.md of the minindn package that lists all the required packages on your machine. Typically, you need to have a working NDN environment, e.g., NFD, NLSR and some ndn utilities.
+You can follow the instructions in the INSTALL.md of the minindn package that lists all the required packages on your machine. Typically, you need to have a working NDN environment, e.g., NFD, NLSR and some ndn utilities (in particular, ndnpoke and ndnpeek must be installed in the system to run successfully our illustrative test. Those utilities are part of the NDN essential tools package).
 
 - P4 bmv2 a.k.a. P4 software-switch
 You may avoid downloading and running a P4 compiler for the bmv2 target, because a compiled version in json format of the ndn_router.p4 source files is shipped with this software. However, you need to download and compile the P4 bmv2.
@@ -17,23 +17,28 @@ The nlsr is commented out and not launched at boot on the ndn nodes.
 
 Some settings imported from the p4_mininet test environemnt are applied to the ndn hosts in file in ndn_host.py
 
-Those changes are included as two different patch files in NDN.p4 The file 'mini-ndn.patch' must be applied to the main dir of mini-ndn. While the file ndn_dir.patch must be applied to the ndn directory.
+Those changes are included as two different patch files in NDN.p4 The file 'mini-ndn.patch' must be applied to the main dir of mini-ndn. While the file ndn_dir.patch must be applied to the ndn directory. This can be done as follows:
+cd $MININDN_DIR; patch -p1 < $NDNP4_DIR/mini-ndn/mini-ndn.patch
+cd $MININDN_DIR; patch -p1 < $NDNP4_DIR/mini-ndn/ndn_dir.patch
 
 Additional files to be included in mini-ndn
 ------------------------------------------
+The variable $MININDN_DIR is a placeholder for the mini-ndn home directory in your system.
 
-- ndn/experiments/my_experiment.py : it describes a basic experiment to be run in the topology. The experiment consists of two nodes exchanging an Interest and a Data packet by using ndnpeek and ndnpoke application. The code is pretty easy to follow. It includes some set-up to be done for the first node, on which some routes need to be installed. Then, in the run method the ndnpeek and ndnpoke calls are instantiated on different host nodes.
+- $MININDN_DIR/ndn/experiments/my_experiment.py : it describes a basic experiment to be run in the topology. The experiment consists of two nodes exchanging an Interest and a Data packet by using ndnpeek and ndnpoke application. The code is pretty easy to follow. It includes some set-up to be done for the first node, on which some routes need to be installed. Then, in the run method the ndnpeek and ndnpoke calls are instantiated on different host nodes.
 
-- ndn/ndnP4_demo.py : this file is provided within the p4-lang repository by Barefoot Networks. It's not actually in use, but it has been included to track some code that has been leveraged in our mininet setup.
+- $MININDN_DIR/ndn/ndnP4_demo.py : this file is provided within the p4-lang repository by Barefoot Networks. It's not actually in use, but it has been included to track some code that has been leveraged in our mininet setup.
 
-- ndn/p4_mininet.py : the template this file is based on is likely the bmv2/mininet/p4_mininet.py. However, it includes more things. First, there is a parseConfig method to read and parse the attributes specified in the p4-switch.conf. While in the original file, P4Switch's arguments were passed as parameters to the class constructor. Second, there is a method that fills the P4-switch's tables. Third, the original version of this file defined classes P4Host and P4Switch, now it defines only a custom version of P4Switch, since the ndn node class is used to instantiate hosts. 
+- $MININDN_DIR/ndn/p4_mininet.py : the template this file is based on is likely the bmv2/mininet/p4_mininet.py. However, it includes more things. First, there is a parseConfig method to read and parse the attributes specified in the p4-switch.conf. While in the original file, P4Switch's arguments were passed as parameters to the class constructor. Second, there is a method that fills the P4-switch's tables. Third, the original version of this file defined classes P4Host and P4Switch, now it defines only a custom version of P4Switch, since the ndn node class is used to instantiate hosts. 
 
-- p4-switch.conf : it includes arguments that are usually passed to the switch executable as well as the path to the executable itself. (I wonder if the cmd line eventually hadn't worked and so I later moved to a solution with this configuration file.)
-
+- $MININDN_DIR/p4-switch.conf : it includes arguments that are usually passed to the switch executable as well as the path to the executable itself. The minindn bin script looks for this file in /usr/local/etc/mini-ndn/; so you must either copy the file in such directory or copy to a different directory and specify the absolute path of that directory through the "--p4-dir" optional argument.
 
 P4 switch configuration file
 -----------------------------------------
 The "p4-switch.conf" file contains arguments loaded by the experiment at run-time that are used to tailor the p4-switch behavior. You MUST edit it in order to modify the paths to files on your file system. Every line contains a small comment after the semicolon explaining the field meaning.
+You must either copy "p4-switch.conf" to "/usr/local/etc/mini-ndn/" or copy to a different directory and specify the absolute path of that directory through the "--p4-dir" optional argument.
+
+
 
 
 Experiment topology description
