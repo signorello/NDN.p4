@@ -1,0 +1,2676 @@
+{
+    "header_types": [
+        {
+            "name": "standard_metadata_t",
+            "id": 0,
+            "fields": [
+                [
+                    "ingress_port",
+                    9
+                ],
+                [
+                    "packet_length",
+                    32
+                ],
+                [
+                    "egress_spec",
+                    9
+                ],
+                [
+                    "egress_port",
+                    9
+                ],
+                [
+                    "egress_instance",
+                    32
+                ],
+                [
+                    "instance_type",
+                    32
+                ],
+                [
+                    "clone_spec",
+                    32
+                ],
+                [
+                    "_padding",
+                    5
+                ]
+            ],
+            "length_exp": null,
+            "max_length": null
+        },
+        {
+            "name": "name_metadata_t",
+            "id": 1,
+            "fields": [
+                [
+                    "name_hash",
+                    16
+                ],
+                [
+                    "namesize",
+                    8
+                ],
+                [
+                    "namemask",
+                    16
+                ],
+                [
+                    "tmp",
+                    8
+                ],
+                [
+                    "components",
+                    8
+                ]
+            ],
+            "length_exp": null,
+            "max_length": null
+        },
+        {
+            "name": "components_metadata_t",
+            "id": 2,
+            "fields": [
+                [
+                    "c1",
+                    16
+                ],
+                [
+                    "c2",
+                    16
+                ],
+                [
+                    "c3",
+                    16
+                ],
+                [
+                    "c4",
+                    16
+                ]
+            ],
+            "length_exp": null,
+            "max_length": null
+        },
+        {
+            "name": "ingress_metadata_t",
+            "id": 3,
+            "fields": [
+                [
+                    "tmp",
+                    8
+                ]
+            ],
+            "length_exp": null,
+            "max_length": null
+        },
+        {
+            "name": "flow_metadata_t",
+            "id": 4,
+            "fields": [
+                [
+                    "isInPIT",
+                    8
+                ],
+                [
+                    "hasFIBentry",
+                    8
+                ],
+                [
+                    "packetType",
+                    8
+                ]
+            ],
+            "length_exp": null,
+            "max_length": null
+        },
+        {
+            "name": "ethernet_t",
+            "id": 5,
+            "fields": [
+                [
+                    "dstAddr",
+                    48
+                ],
+                [
+                    "srcAddr",
+                    48
+                ],
+                [
+                    "etherType",
+                    16
+                ]
+            ],
+            "length_exp": null,
+            "max_length": null
+        },
+        {
+            "name": "dumbHeaderSmall_t",
+            "id": 6,
+            "fields": [
+                [
+                    "total",
+                    112
+                ]
+            ],
+            "length_exp": null,
+            "max_length": null
+        },
+        {
+            "name": "dumbHeaderMedium_t",
+            "id": 7,
+            "fields": [
+                [
+                    "total",
+                    144
+                ]
+            ],
+            "length_exp": null,
+            "max_length": null
+        },
+        {
+            "name": "fixedTLV_t",
+            "id": 8,
+            "fields": [
+                [
+                    "tlv_code",
+                    8
+                ],
+                [
+                    "tlv_length",
+                    8
+                ],
+                [
+                    "tlv_value",
+                    "*"
+                ]
+            ],
+            "length_exp": {
+                "type": "expression",
+                "value": {
+                    "op": "-",
+                    "left": {
+                        "type": "expression",
+                        "value": {
+                            "op": "*",
+                            "left": {
+                                "type": "expression",
+                                "value": {
+                                    "op": "+",
+                                    "left": {
+                                        "type": "local",
+                                        "value": 1
+                                    },
+                                    "right": {
+                                        "type": "hexstr",
+                                        "value": "0x2"
+                                    }
+                                }
+                            },
+                            "right": {
+                                "type": "hexstr",
+                                "value": "0x8"
+                            }
+                        }
+                    },
+                    "right": {
+                        "type": "hexstr",
+                        "value": "0x10"
+                    }
+                }
+            },
+            "max_length": 255
+        },
+        {
+            "name": "smallTL_t",
+            "id": 9,
+            "fields": [
+                [
+                    "tl_code",
+                    8
+                ],
+                [
+                    "tl_length",
+                    8
+                ]
+            ],
+            "length_exp": null,
+            "max_length": null
+        },
+        {
+            "name": "mediumTL_t",
+            "id": 10,
+            "fields": [
+                [
+                    "tl_code",
+                    8
+                ],
+                [
+                    "tl_len_code",
+                    8
+                ],
+                [
+                    "tl_length",
+                    16
+                ]
+            ],
+            "length_exp": null,
+            "max_length": null
+        },
+        {
+            "name": "bigTL_t",
+            "id": 11,
+            "fields": [
+                [
+                    "tl_code",
+                    8
+                ],
+                [
+                    "tl_len_code",
+                    8
+                ],
+                [
+                    "tl_length",
+                    32
+                ]
+            ],
+            "length_exp": null,
+            "max_length": null
+        },
+        {
+            "name": "hugeTL_t",
+            "id": 12,
+            "fields": [
+                [
+                    "tl_code",
+                    8
+                ],
+                [
+                    "tl_len_code",
+                    8
+                ],
+                [
+                    "tl_length",
+                    64
+                ]
+            ],
+            "length_exp": null,
+            "max_length": null
+        }
+    ],
+    "headers": [
+        {
+            "name": "standard_metadata",
+            "id": 0,
+            "header_type": "standard_metadata_t",
+            "metadata": true
+        },
+        {
+            "name": "name_metadata",
+            "id": 1,
+            "header_type": "name_metadata_t",
+            "metadata": true
+        },
+        {
+            "name": "flow_metadata",
+            "id": 2,
+            "header_type": "flow_metadata_t",
+            "metadata": true
+        },
+        {
+            "name": "pit_metadata",
+            "id": 3,
+            "header_type": "ingress_metadata_t",
+            "metadata": true
+        },
+        {
+            "name": "comp_metadata",
+            "id": 4,
+            "header_type": "components_metadata_t",
+            "metadata": true
+        },
+        {
+            "name": "ethernet",
+            "id": 5,
+            "header_type": "ethernet_t",
+            "metadata": false
+        },
+        {
+            "name": "small_ndnlp",
+            "id": 6,
+            "header_type": "dumbHeaderSmall_t",
+            "metadata": false
+        },
+        {
+            "name": "medium_ndnlp",
+            "id": 7,
+            "header_type": "dumbHeaderMedium_t",
+            "metadata": false
+        },
+        {
+            "name": "small_tlv0",
+            "id": 8,
+            "header_type": "smallTL_t",
+            "metadata": false
+        },
+        {
+            "name": "medium_tlv0",
+            "id": 9,
+            "header_type": "mediumTL_t",
+            "metadata": false
+        },
+        {
+            "name": "big_tlv0",
+            "id": 10,
+            "header_type": "bigTL_t",
+            "metadata": false
+        },
+        {
+            "name": "huge_tlv0",
+            "id": 11,
+            "header_type": "hugeTL_t",
+            "metadata": false
+        },
+        {
+            "name": "small_name",
+            "id": 12,
+            "header_type": "smallTL_t",
+            "metadata": false
+        },
+        {
+            "name": "medium_name",
+            "id": 13,
+            "header_type": "mediumTL_t",
+            "metadata": false
+        },
+        {
+            "name": "big_name",
+            "id": 14,
+            "header_type": "bigTL_t",
+            "metadata": false
+        },
+        {
+            "name": "huge_name",
+            "id": 15,
+            "header_type": "hugeTL_t",
+            "metadata": false
+        },
+        {
+            "name": "components[0]",
+            "id": 16,
+            "header_type": "fixedTLV_t",
+            "metadata": false
+        },
+        {
+            "name": "components[1]",
+            "id": 17,
+            "header_type": "fixedTLV_t",
+            "metadata": false
+        },
+        {
+            "name": "components[2]",
+            "id": 18,
+            "header_type": "fixedTLV_t",
+            "metadata": false
+        },
+        {
+            "name": "components[3]",
+            "id": 19,
+            "header_type": "fixedTLV_t",
+            "metadata": false
+        },
+        {
+            "name": "components[4]",
+            "id": 20,
+            "header_type": "fixedTLV_t",
+            "metadata": false
+        },
+        {
+            "name": "isha256",
+            "id": 21,
+            "header_type": "fixedTLV_t",
+            "metadata": false
+        },
+        {
+            "name": "nonce",
+            "id": 22,
+            "header_type": "fixedTLV_t",
+            "metadata": false
+        },
+        {
+            "name": "lifetime",
+            "id": 23,
+            "header_type": "fixedTLV_t",
+            "metadata": false
+        },
+        {
+            "name": "metainfo",
+            "id": 24,
+            "header_type": "fixedTLV_t",
+            "metadata": false
+        },
+        {
+            "name": "small_content",
+            "id": 25,
+            "header_type": "smallTL_t",
+            "metadata": false
+        },
+        {
+            "name": "medium_content",
+            "id": 26,
+            "header_type": "mediumTL_t",
+            "metadata": false
+        },
+        {
+            "name": "big_content",
+            "id": 27,
+            "header_type": "bigTL_t",
+            "metadata": false
+        },
+        {
+            "name": "huge_content",
+            "id": 28,
+            "header_type": "hugeTL_t",
+            "metadata": false
+        },
+        {
+            "name": "signature_info",
+            "id": 29,
+            "header_type": "fixedTLV_t",
+            "metadata": false
+        },
+        {
+            "name": "signature_value",
+            "id": 30,
+            "header_type": "fixedTLV_t",
+            "metadata": false
+        }
+    ],
+    "header_stacks": [
+        {
+            "name": "components",
+            "id": 0,
+            "size": 5,
+            "header_type": "fixedTLV_t",
+            "header_ids": [
+                16,
+                17,
+                18,
+                19,
+                20
+            ]
+        }
+    ],
+    "parsers": [
+        {
+            "name": "parser",
+            "id": 0,
+            "init_state": "start",
+            "parse_states": [
+                {
+                    "name": "size_name",
+                    "id": 0,
+                    "parser_ops": [],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                8,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0xfd",
+                            "mask": null,
+                            "next_state": "parse_medium_name"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0xfe",
+                            "mask": null,
+                            "next_state": "parse_big_name"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0xff",
+                            "mask": null,
+                            "next_state": "parse_huge_name"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_small_name"
+                        }
+                    ]
+                },
+                {
+                    "name": "start",
+                    "id": 1,
+                    "parser_ops": [],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_ethernet"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_huge_content",
+                    "id": 2,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "huge_content"
+                                }
+                            ]
+                        },
+                        {
+                            "op": "set",
+                            "parameters": [
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "name_metadata",
+                                        "namesize"
+                                    ]
+                                },
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "huge_content",
+                                        "tl_length"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_content"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_small_name",
+                    "id": 3,
+                    "parser_ops": [
+                        {
+                            "op": "set",
+                            "parameters": [
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "name_metadata",
+                                        "namesize"
+                                    ]
+                                },
+                                {
+                                    "type": "lookahead",
+                                    "value": [
+                                        8,
+                                        8
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "small_name"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_name"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_ethernet",
+                    "id": 4,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "ethernet"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "ethernet",
+                                "etherType"
+                            ]
+                        },
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                0,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0x862450",
+                            "mask": "0xffffff",
+                            "next_state": "parse_ndn_lp"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x862450",
+                            "mask": "0xffff00",
+                            "next_state": "parse_ndn"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_small_tlv0",
+                    "id": 5,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "small_tlv0"
+                                }
+                            ]
+                        },
+                        {
+                            "op": "set",
+                            "parameters": [
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "flow_metadata",
+                                        "packetType"
+                                    ]
+                                },
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "small_tlv0",
+                                        "tl_code"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_tlv0"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_big_name",
+                    "id": 6,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "big_name"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_name"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_content",
+                    "id": 7,
+                    "parser_ops": [],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                0,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0x16",
+                            "mask": null,
+                            "next_state": "parse_signature_info"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": null
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_nonce",
+                    "id": 8,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "nonce"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                0,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0x0c",
+                            "mask": null,
+                            "next_state": "parse_lifetime"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": null
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_ndn_lp",
+                    "id": 9,
+                    "parser_ops": [],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                8,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0xfd",
+                            "mask": null,
+                            "next_state": "parse_medium_ndnlp"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_small_ndnlp"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_signature_info",
+                    "id": 10,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "signature_info"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                0,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0x17",
+                            "mask": null,
+                            "next_state": "parse_signature_value"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": null
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_lifetime",
+                    "id": 11,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "lifetime"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": null
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_medium_name",
+                    "id": 12,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "medium_name"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_name"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_huge_tlv0",
+                    "id": 13,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "huge_tlv0"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_tlv0"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_metainfo",
+                    "id": 14,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "metainfo"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                0,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0x15",
+                            "mask": null,
+                            "next_state": "size_content"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": null
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_medium_ndnlp",
+                    "id": 15,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "medium_ndnlp"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_ndn"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_huge_name",
+                    "id": 16,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "huge_name"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_name"
+                        }
+                    ]
+                },
+                {
+                    "name": "size_content",
+                    "id": 17,
+                    "parser_ops": [],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                8,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0xfd",
+                            "mask": null,
+                            "next_state": "parse_medium_content"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0xfe",
+                            "mask": null,
+                            "next_state": "parse_big_content"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0xff",
+                            "mask": null,
+                            "next_state": "parse_huge_content"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_small_content"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_name",
+                    "id": 18,
+                    "parser_ops": [],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                0,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0x08",
+                            "mask": null,
+                            "next_state": "parse_components"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x01",
+                            "mask": null,
+                            "next_state": "parse_isha256"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": null
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_small_content",
+                    "id": 19,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "small_content"
+                                }
+                            ]
+                        },
+                        {
+                            "op": "set",
+                            "parameters": [
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "name_metadata",
+                                        "namesize"
+                                    ]
+                                },
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "small_content",
+                                        "tl_length"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_content"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_components",
+                    "id": 20,
+                    "parser_ops": [
+                        {
+                            "op": "set",
+                            "parameters": [
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "name_metadata",
+                                        "tmp"
+                                    ]
+                                },
+                                {
+                                    "type": "lookahead",
+                                    "value": [
+                                        8,
+                                        8
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "stack",
+                                    "value": "components"
+                                }
+                            ]
+                        },
+                        {
+                            "op": "set",
+                            "parameters": [
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "name_metadata",
+                                        "namesize"
+                                    ]
+                                },
+                                {
+                                    "type": "expression",
+                                    "value": {
+                                        "type": "expression",
+                                        "value": {
+                                            "op": "-",
+                                            "left": {
+                                                "type": "expression",
+                                                "value": {
+                                                    "op": "-",
+                                                    "left": {
+                                                        "type": "field",
+                                                        "value": [
+                                                            "name_metadata",
+                                                            "namesize"
+                                                        ]
+                                                    },
+                                                    "right": {
+                                                        "type": "field",
+                                                        "value": [
+                                                            "name_metadata",
+                                                            "tmp"
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "right": {
+                                                "type": "hexstr",
+                                                "value": "0x2"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "name_metadata",
+                                "namesize"
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0x00",
+                            "mask": null,
+                            "next_state": "parse_afterName"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_components"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_small_ndnlp",
+                    "id": 21,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "small_ndnlp"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_ndn"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_afterName",
+                    "id": 22,
+                    "parser_ops": [],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                0,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0x01",
+                            "mask": null,
+                            "next_state": "parse_isha256"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x0a",
+                            "mask": null,
+                            "next_state": "parse_nonce"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x14",
+                            "mask": null,
+                            "next_state": "parse_metainfo"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": null
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_ndn",
+                    "id": 23,
+                    "parser_ops": [],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                8,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0xfd",
+                            "mask": null,
+                            "next_state": "parse_medium_tlv0"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0xfe",
+                            "mask": null,
+                            "next_state": "parse_big_tlv0"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0xff",
+                            "mask": null,
+                            "next_state": "parse_huge_tlv0"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_small_tlv0"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_medium_tlv0",
+                    "id": 24,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "medium_tlv0"
+                                }
+                            ]
+                        },
+                        {
+                            "op": "set",
+                            "parameters": [
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "flow_metadata",
+                                        "packetType"
+                                    ]
+                                },
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "medium_tlv0",
+                                        "tl_code"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_tlv0"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_signature_value",
+                    "id": 25,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "signature_value"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": null
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_medium_content",
+                    "id": 26,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "medium_content"
+                                }
+                            ]
+                        },
+                        {
+                            "op": "set",
+                            "parameters": [
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "name_metadata",
+                                        "namesize"
+                                    ]
+                                },
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "medium_content",
+                                        "tl_length"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_content"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_big_tlv0",
+                    "id": 27,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "big_tlv0"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_tlv0"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_big_content",
+                    "id": 28,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "big_content"
+                                }
+                            ]
+                        },
+                        {
+                            "op": "set",
+                            "parameters": [
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "name_metadata",
+                                        "namesize"
+                                    ]
+                                },
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "big_content",
+                                        "tl_length"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_content"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_tlv0",
+                    "id": 29,
+                    "parser_ops": [],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                0,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0x07",
+                            "mask": null,
+                            "next_state": "size_name"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": null
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_isha256",
+                    "id": 30,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "isha256"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                0,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0x0a",
+                            "mask": null,
+                            "next_state": "parse_nonce"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x14",
+                            "mask": null,
+                            "next_state": "parse_metainfo"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": null
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "parse_vsets": [],
+    "deparsers": [
+        {
+            "name": "deparser",
+            "id": 0,
+            "order": [
+                "ethernet",
+                "small_ndnlp",
+                "medium_ndnlp",
+                "big_tlv0",
+                "medium_tlv0",
+                "small_tlv0",
+                "huge_tlv0",
+                "huge_name",
+                "big_name",
+                "medium_name",
+                "small_name",
+                "components[0]",
+                "components[1]",
+                "components[2]",
+                "components[3]",
+                "components[4]",
+                "isha256",
+                "metainfo",
+                "huge_content",
+                "medium_content",
+                "small_content",
+                "big_content",
+                "signature_info",
+                "signature_value",
+                "nonce",
+                "lifetime"
+            ]
+        }
+    ],
+    "meter_arrays": [],
+    "actions": [
+        {
+            "name": "rewrite_macs",
+            "id": 0,
+            "runtime_data": [
+                {
+                    "name": "dmac",
+                    "bitwidth": 48
+                },
+                {
+                    "name": "smac",
+                    "bitwidth": 48
+                }
+            ],
+            "primitives": [
+                {
+                    "op": "modify_field",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "ethernet",
+                                "dstAddr"
+                            ]
+                        },
+                        {
+                            "type": "runtime_data",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "op": "modify_field",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "ethernet",
+                                "srcAddr"
+                            ]
+                        },
+                        {
+                            "type": "runtime_data",
+                            "value": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "computeStoreTablesIndex",
+            "id": 1,
+            "runtime_data": [],
+            "primitives": [
+                {
+                    "op": "modify_field_with_hash_based_offset",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "name_metadata",
+                                "name_hash"
+                            ]
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x0"
+                        },
+                        {
+                            "type": "calculation",
+                            "value": "name_hash"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x10000"
+                        }
+                    ]
+                },
+                {
+                    "op": "modify_field_with_hash_based_offset",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "comp_metadata",
+                                "c1"
+                            ]
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x0"
+                        },
+                        {
+                            "type": "calculation",
+                            "value": "chash1"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x10000"
+                        }
+                    ]
+                },
+                {
+                    "op": "modify_field_with_hash_based_offset",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "comp_metadata",
+                                "c2"
+                            ]
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x0"
+                        },
+                        {
+                            "type": "calculation",
+                            "value": "chash2"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x10000"
+                        }
+                    ]
+                },
+                {
+                    "op": "modify_field_with_hash_based_offset",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "comp_metadata",
+                                "c3"
+                            ]
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x0"
+                        },
+                        {
+                            "type": "calculation",
+                            "value": "chash3"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x10000"
+                        }
+                    ]
+                },
+                {
+                    "op": "modify_field_with_hash_based_offset",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "comp_metadata",
+                                "c4"
+                            ]
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x0"
+                        },
+                        {
+                            "type": "calculation",
+                            "value": "chash4"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x10000"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "updatePit_entry",
+            "id": 2,
+            "runtime_data": [],
+            "primitives": [
+                {
+                    "op": "modify_field",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "pit_metadata",
+                                "tmp"
+                            ]
+                        },
+                        {
+                            "type": "expression",
+                            "value": {
+                                "type": "expression",
+                                "value": {
+                                    "op": "&",
+                                    "left": {
+                                        "type": "field",
+                                        "value": [
+                                            "flow_metadata",
+                                            "isInPIT"
+                                        ]
+                                    },
+                                    "right": {
+                                        "type": "expression",
+                                        "value": {
+                                            "op": "<<",
+                                            "left": {
+                                                "type": "hexstr",
+                                                "value": "0x1"
+                                            },
+                                            "right": {
+                                                "type": "field",
+                                                "value": [
+                                                    "standard_metadata",
+                                                    "ingress_port"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "op": "modify_field",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "flow_metadata",
+                                "isInPIT"
+                            ]
+                        },
+                        {
+                            "type": "expression",
+                            "value": {
+                                "type": "expression",
+                                "value": {
+                                    "op": "|",
+                                    "left": {
+                                        "type": "field",
+                                        "value": [
+                                            "flow_metadata",
+                                            "isInPIT"
+                                        ]
+                                    },
+                                    "right": {
+                                        "type": "expression",
+                                        "value": {
+                                            "op": "<<",
+                                            "left": {
+                                                "type": "hexstr",
+                                                "value": "0x1"
+                                            },
+                                            "right": {
+                                                "type": "field",
+                                                "value": [
+                                                    "standard_metadata",
+                                                    "ingress_port"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "op": "register_write",
+                    "parameters": [
+                        {
+                            "type": "register_array",
+                            "value": "pit_r"
+                        },
+                        {
+                            "type": "field",
+                            "value": [
+                                "name_metadata",
+                                "name_hash"
+                            ]
+                        },
+                        {
+                            "type": "field",
+                            "value": [
+                                "flow_metadata",
+                                "isInPIT"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "cleanPitEntry",
+            "id": 3,
+            "runtime_data": [],
+            "primitives": [
+                {
+                    "op": "register_read",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "flow_metadata",
+                                "isInPIT"
+                            ]
+                        },
+                        {
+                            "type": "register_array",
+                            "value": "pit_r"
+                        },
+                        {
+                            "type": "field",
+                            "value": [
+                                "name_metadata",
+                                "name_hash"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "op": "register_write",
+                    "parameters": [
+                        {
+                            "type": "register_array",
+                            "value": "pit_r"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x0"
+                        },
+                        {
+                            "type": "field",
+                            "value": [
+                                "name_metadata",
+                                "name_hash"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "_drop",
+            "id": 4,
+            "runtime_data": [],
+            "primitives": [
+                {
+                    "op": "drop",
+                    "parameters": []
+                }
+            ]
+        },
+        {
+            "name": "set_egr",
+            "id": 5,
+            "runtime_data": [
+                {
+                    "name": "egress_spec",
+                    "bitwidth": 9
+                }
+            ],
+            "primitives": [
+                {
+                    "op": "modify_field",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "standard_metadata",
+                                "egress_spec"
+                            ]
+                        },
+                        {
+                            "type": "runtime_data",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "op": "modify_field",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "flow_metadata",
+                                "hasFIBentry"
+                            ]
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x1"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "readPitEntry",
+            "id": 6,
+            "runtime_data": [],
+            "primitives": [
+                {
+                    "op": "register_read",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "flow_metadata",
+                                "isInPIT"
+                            ]
+                        },
+                        {
+                            "type": "register_array",
+                            "value": "pit_r"
+                        },
+                        {
+                            "type": "field",
+                            "value": [
+                                "name_metadata",
+                                "name_hash"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "storeNumOfComponents",
+            "id": 7,
+            "runtime_data": [
+                {
+                    "name": "total",
+                    "bitwidth": 8
+                }
+            ],
+            "primitives": [
+                {
+                    "op": "modify_field",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "name_metadata",
+                                "components"
+                            ]
+                        },
+                        {
+                            "type": "runtime_data",
+                            "value": 0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "setOutputIface",
+            "id": 8,
+            "runtime_data": [
+                {
+                    "name": "out_iface",
+                    "bitwidth": 9
+                }
+            ],
+            "primitives": [
+                {
+                    "op": "modify_field",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "standard_metadata",
+                                "egress_spec"
+                            ]
+                        },
+                        {
+                            "type": "runtime_data",
+                            "value": 0
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "pipelines": [
+        {
+            "name": "ingress",
+            "id": 0,
+            "init_table": "count_table",
+            "tables": [
+                {
+                    "name": "count_table",
+                    "id": 0,
+                    "match_type": "exact",
+                    "type": "simple",
+                    "max_size": 5,
+                    "with_counters": false,
+                    "direct_meters": null,
+                    "support_timeout": false,
+                    "key": [
+                        {
+                            "match_type": "valid",
+                            "target": "components[0]",
+                            "mask": null
+                        },
+                        {
+                            "match_type": "valid",
+                            "target": "components[1]",
+                            "mask": null
+                        },
+                        {
+                            "match_type": "valid",
+                            "target": "components[2]",
+                            "mask": null
+                        },
+                        {
+                            "match_type": "valid",
+                            "target": "components[3]",
+                            "mask": null
+                        },
+                        {
+                            "match_type": "valid",
+                            "target": "components[4]",
+                            "mask": null
+                        }
+                    ],
+                    "actions": [
+                        "storeNumOfComponents",
+                        "_drop"
+                    ],
+                    "next_tables": {
+                        "storeNumOfComponents": "_condition_0",
+                        "_drop": "_condition_0"
+                    },
+                    "base_default_next": "_condition_0"
+                },
+                {
+                    "name": "hashName_table",
+                    "id": 1,
+                    "match_type": "exact",
+                    "type": "simple",
+                    "max_size": 1,
+                    "with_counters": false,
+                    "direct_meters": null,
+                    "support_timeout": false,
+                    "key": [],
+                    "actions": [
+                        "computeStoreTablesIndex"
+                    ],
+                    "next_tables": {
+                        "computeStoreTablesIndex": "pit_table"
+                    },
+                    "base_default_next": "pit_table"
+                },
+                {
+                    "name": "pit_table",
+                    "id": 2,
+                    "match_type": "exact",
+                    "type": "simple",
+                    "max_size": 2,
+                    "with_counters": false,
+                    "direct_meters": null,
+                    "support_timeout": false,
+                    "key": [
+                        {
+                            "match_type": "exact",
+                            "target": [
+                                "flow_metadata",
+                                "packetType"
+                            ],
+                            "mask": null
+                        }
+                    ],
+                    "actions": [
+                        "readPitEntry",
+                        "cleanPitEntry"
+                    ],
+                    "next_tables": {
+                        "readPitEntry": "_condition_1",
+                        "cleanPitEntry": "_condition_1"
+                    },
+                    "base_default_next": "_condition_1"
+                },
+                {
+                    "name": "updatePit_table",
+                    "id": 3,
+                    "match_type": "exact",
+                    "type": "simple",
+                    "max_size": 2,
+                    "with_counters": false,
+                    "direct_meters": null,
+                    "support_timeout": false,
+                    "key": [
+                        {
+                            "match_type": "exact",
+                            "target": [
+                                "flow_metadata",
+                                "hasFIBentry"
+                            ],
+                            "mask": null
+                        }
+                    ],
+                    "actions": [
+                        "updatePit_entry",
+                        "_drop"
+                    ],
+                    "next_tables": {
+                        "updatePit_entry": null,
+                        "_drop": null
+                    },
+                    "base_default_next": null
+                },
+                {
+                    "name": "routeData_table",
+                    "id": 4,
+                    "match_type": "exact",
+                    "type": "simple",
+                    "max_size": 20,
+                    "with_counters": false,
+                    "direct_meters": null,
+                    "support_timeout": false,
+                    "key": [
+                        {
+                            "match_type": "exact",
+                            "target": [
+                                "flow_metadata",
+                                "isInPIT"
+                            ],
+                            "mask": null
+                        }
+                    ],
+                    "actions": [
+                        "setOutputIface",
+                        "_drop"
+                    ],
+                    "next_tables": {
+                        "setOutputIface": null,
+                        "_drop": null
+                    },
+                    "base_default_next": null
+                },
+                {
+                    "name": "fib_table",
+                    "id": 5,
+                    "match_type": "ternary",
+                    "type": "simple",
+                    "max_size": 16384,
+                    "with_counters": false,
+                    "direct_meters": null,
+                    "support_timeout": false,
+                    "key": [
+                        {
+                            "match_type": "exact",
+                            "target": [
+                                "name_metadata",
+                                "components"
+                            ],
+                            "mask": null
+                        },
+                        {
+                            "match_type": "ternary",
+                            "target": [
+                                "comp_metadata",
+                                "c1"
+                            ],
+                            "mask": null
+                        },
+                        {
+                            "match_type": "ternary",
+                            "target": [
+                                "comp_metadata",
+                                "c2"
+                            ],
+                            "mask": null
+                        },
+                        {
+                            "match_type": "ternary",
+                            "target": [
+                                "comp_metadata",
+                                "c3"
+                            ],
+                            "mask": null
+                        },
+                        {
+                            "match_type": "ternary",
+                            "target": [
+                                "comp_metadata",
+                                "c4"
+                            ],
+                            "mask": null
+                        },
+                        {
+                            "match_type": "ternary",
+                            "target": [
+                                "name_metadata",
+                                "name_hash"
+                            ],
+                            "mask": null
+                        }
+                    ],
+                    "actions": [
+                        "set_egr",
+                        "_drop"
+                    ],
+                    "next_tables": {
+                        "set_egr": "updatePit_table",
+                        "_drop": "updatePit_table"
+                    },
+                    "base_default_next": "updatePit_table"
+                }
+            ],
+            "conditionals": [
+                {
+                    "name": "_condition_0",
+                    "id": 0,
+                    "expression": {
+                        "type": "expression",
+                        "value": {
+                            "op": "!=",
+                            "left": {
+                                "type": "field",
+                                "value": [
+                                    "name_metadata",
+                                    "components"
+                                ]
+                            },
+                            "right": {
+                                "type": "hexstr",
+                                "value": "0x0"
+                            }
+                        }
+                    },
+                    "true_next": "hashName_table",
+                    "false_next": null
+                },
+                {
+                    "name": "_condition_1",
+                    "id": 1,
+                    "expression": {
+                        "type": "expression",
+                        "value": {
+                            "op": "==",
+                            "left": {
+                                "type": "field",
+                                "value": [
+                                    "flow_metadata",
+                                    "packetType"
+                                ]
+                            },
+                            "right": {
+                                "type": "hexstr",
+                                "value": "0x5"
+                            }
+                        }
+                    },
+                    "true_next": "_condition_2",
+                    "false_next": "routeData_table"
+                },
+                {
+                    "name": "_condition_2",
+                    "id": 2,
+                    "expression": {
+                        "type": "expression",
+                        "value": {
+                            "op": "==",
+                            "left": {
+                                "type": "field",
+                                "value": [
+                                    "flow_metadata",
+                                    "isInPIT"
+                                ]
+                            },
+                            "right": {
+                                "type": "hexstr",
+                                "value": "0x0"
+                            }
+                        }
+                    },
+                    "true_next": "fib_table",
+                    "false_next": "updatePit_table"
+                }
+            ]
+        },
+        {
+            "name": "egress",
+            "id": 1,
+            "init_table": "send_packet_table",
+            "tables": [
+                {
+                    "name": "send_packet_table",
+                    "id": 6,
+                    "match_type": "exact",
+                    "type": "simple",
+                    "max_size": 256,
+                    "with_counters": false,
+                    "direct_meters": null,
+                    "support_timeout": false,
+                    "key": [
+                        {
+                            "match_type": "exact",
+                            "target": [
+                                "standard_metadata",
+                                "egress_port"
+                            ],
+                            "mask": null
+                        }
+                    ],
+                    "actions": [
+                        "rewrite_macs",
+                        "_drop"
+                    ],
+                    "next_tables": {
+                        "rewrite_macs": null,
+                        "_drop": null
+                    },
+                    "base_default_next": null
+                }
+            ],
+            "conditionals": []
+        }
+    ],
+    "calculations": [
+        {
+            "name": "name_hash",
+            "id": 0,
+            "input": [
+                {
+                    "type": "field",
+                    "value": [
+                        "components[0]",
+                        "tlv_value"
+                    ]
+                },
+                {
+                    "type": "field",
+                    "value": [
+                        "components[1]",
+                        "tlv_value"
+                    ]
+                },
+                {
+                    "type": "field",
+                    "value": [
+                        "components[2]",
+                        "tlv_value"
+                    ]
+                },
+                {
+                    "type": "field",
+                    "value": [
+                        "components[3]",
+                        "tlv_value"
+                    ]
+                },
+                {
+                    "type": "field",
+                    "value": [
+                        "components[4]",
+                        "tlv_value"
+                    ]
+                }
+            ],
+            "algo": "crc16"
+        },
+        {
+            "name": "chash1",
+            "id": 1,
+            "input": [
+                {
+                    "type": "field",
+                    "value": [
+                        "components[0]",
+                        "tlv_value"
+                    ]
+                }
+            ],
+            "algo": "crc16"
+        },
+        {
+            "name": "chash2",
+            "id": 2,
+            "input": [
+                {
+                    "type": "field",
+                    "value": [
+                        "components[0]",
+                        "tlv_value"
+                    ]
+                },
+                {
+                    "type": "field",
+                    "value": [
+                        "components[1]",
+                        "tlv_value"
+                    ]
+                }
+            ],
+            "algo": "crc16"
+        },
+        {
+            "name": "chash3",
+            "id": 3,
+            "input": [
+                {
+                    "type": "field",
+                    "value": [
+                        "components[0]",
+                        "tlv_value"
+                    ]
+                },
+                {
+                    "type": "field",
+                    "value": [
+                        "components[1]",
+                        "tlv_value"
+                    ]
+                },
+                {
+                    "type": "field",
+                    "value": [
+                        "components[2]",
+                        "tlv_value"
+                    ]
+                }
+            ],
+            "algo": "crc16"
+        },
+        {
+            "name": "chash4",
+            "id": 4,
+            "input": [
+                {
+                    "type": "field",
+                    "value": [
+                        "components[0]",
+                        "tlv_value"
+                    ]
+                },
+                {
+                    "type": "field",
+                    "value": [
+                        "components[1]",
+                        "tlv_value"
+                    ]
+                },
+                {
+                    "type": "field",
+                    "value": [
+                        "components[2]",
+                        "tlv_value"
+                    ]
+                },
+                {
+                    "type": "field",
+                    "value": [
+                        "components[3]",
+                        "tlv_value"
+                    ]
+                }
+            ],
+            "algo": "crc16"
+        }
+    ],
+    "checksums": [],
+    "learn_lists": [],
+    "field_lists": [],
+    "counter_arrays": [],
+    "register_arrays": [
+        {
+            "name": "pit_r",
+            "id": 0,
+            "bitwidth": 16,
+            "size": 65536
+        }
+    ],
+    "force_arith": [
+        [
+            "standard_metadata",
+            "ingress_port"
+        ],
+        [
+            "standard_metadata",
+            "packet_length"
+        ],
+        [
+            "standard_metadata",
+            "egress_spec"
+        ],
+        [
+            "standard_metadata",
+            "egress_port"
+        ],
+        [
+            "standard_metadata",
+            "egress_instance"
+        ],
+        [
+            "standard_metadata",
+            "instance_type"
+        ],
+        [
+            "standard_metadata",
+            "clone_spec"
+        ],
+        [
+            "standard_metadata",
+            "_padding"
+        ]
+    ]
+}
