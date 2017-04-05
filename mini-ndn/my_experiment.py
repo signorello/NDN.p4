@@ -67,10 +67,16 @@ class P4NdnExperiment(Experiment):
 	      host.cmd("nfd-status &>> %s" % tmpfile)
 
     def run(self):
-        for host in self.net.hosts:
+        # It is extremely important that ndnpook on node b runs before ndnpeek is launched on a!!! Otherwise the Interest goes too fast that
+        # it will be seen on the switch but not by the ndnpook on node b.
+        for host in list(reversed((self.net.hosts))):
+          print 'Starting demo application on' + host.name
 	  if host.name == 'a':
 	      host.cmd("ndnpeek -p ndn:/snt/sedan/state/signorello.pdf > packetPayload.txt")
 	  elif host.name == 'b':
 	      host.cmd("echo 'Hello world' | ndnpoke -w 30000 ndn:/snt/sedan/state/signorello.pdf &")
+          # Watch out not to remove the following sleep, otherwise the packet sent out by a and processed by s1 is going to be so fast that b
+          # will not be ready to receive it
+          time.sleep(1)
 
 Experiment.register("P4_NDN_experiment", P4NdnExperiment)
