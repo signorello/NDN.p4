@@ -78,3 +78,9 @@ Start the experiment
 
 Few seconds after the experiment is started, you are prompted to the mininet CLI. If the experiment was run successfully, you should have the content "Hello world" written in the file /tmp/a/packetPayload.txt. The text is the payload of the content object retrieved by node 'a' through the ndnpeek utility and provided by node 'b' through the ndnpoke utility.
 You can check how NDN packets are processed by the p4 switch, which runs the ndn_router.p4 program, by looking at the log in 'p4s.s1.log'.
+
+How to cite this work
+-----------------------------------------
+If you are referring to NDN.p4 in a published work, please cite the following paper, not just this github repository. Thank you!
+
+Salvatore Signorello, Radu State, Jerome Francois, Olivier Festor, "NDN.p4: Programming Information-Centric Data-Planes", Proceedings of the IEEE International Workshop on Open-Source Software Networking at NetSoft2016, Jun 2016, Seoul, South Korea.
