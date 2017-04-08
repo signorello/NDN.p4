@@ -200,5 +200,5 @@ table send_packet_table {
 
 control egress {
     // may be a future place for caching logic
-    apply(send_packet_table);
+    //apply(send_packet_table);
 }

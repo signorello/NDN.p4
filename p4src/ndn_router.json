@@ -508,105 +508,8 @@
             "init_state": "start",
             "parse_states": [
                 {
-                    "name": "size_name",
-                    "id": 0,
-                    "parser_ops": [],
-                    "transition_key": [
-                        {
-                            "type": "lookahead",
-                            "value": [
-                                8,
-                                8
-                            ]
-                        }
-                    ],
-                    "transitions": [
-                        {
-                            "type": "hexstr",
-                            "value": "0xfd",
-                            "mask": null,
-                            "next_state": "parse_medium_name"
-                        },
-                        {
-                            "type": "hexstr",
-                            "value": "0xfe",
-                            "mask": null,
-                            "next_state": "parse_big_name"
-                        },
-                        {
-                            "type": "hexstr",
-                            "value": "0xff",
-                            "mask": null,
-                            "next_state": "parse_huge_name"
-                        },
-                        {
-                            "type": "default",
-                            "value": null,
-                            "mask": null,
-                            "next_state": "parse_small_name"
-                        }
-                    ]
-                },
-                {
-                    "name": "start",
-                    "id": 1,
-                    "parser_ops": [],
-                    "transition_key": [],
-                    "transitions": [
-                        {
-                            "type": "default",
-                            "value": null,
-                            "mask": null,
-                            "next_state": "parse_ethernet"
-                        }
-                    ]
-                },
-                {
-                    "name": "parse_huge_content",
-                    "id": 2,
-                    "parser_ops": [
-                        {
-                            "op": "extract",
-                            "parameters": [
-                                {
-                                    "type": "regular",
-                                    "value": "huge_content"
-                                }
-                            ]
-                        },
-                        {
-                            "op": "set",
-                            "parameters": [
-                                {
-                                    "type": "field",
-                                    "value": [
-                                        "name_metadata",
-                                        "namesize"
-                                    ]
-                                },
-                                {
-                                    "type": "field",
-                                    "value": [
-                                        "huge_content",
-                                        "tl_length"
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
-                    "transition_key": [],
-                    "transitions": [
-                        {
-                            "type": "default",
-                            "value": null,
-                            "mask": null,
-                            "next_state": "parse_content"
-                        }
-                    ]
-                },
-                {
                     "name": "parse_small_name",
-                    "id": 3,
+                    "id": 0,
                     "parser_ops": [
                         {
                             "op": "set",
@@ -648,8 +551,417 @@
                     ]
                 },
                 {
-                    "name": "parse_ethernet",
+                    "name": "parse_afterName",
+                    "id": 1,
+                    "parser_ops": [],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                0,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0x01",
+                            "mask": null,
+                            "next_state": "parse_isha256"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x0a",
+                            "mask": null,
+                            "next_state": "parse_nonce"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0x14",
+                            "mask": null,
+                            "next_state": "parse_metainfo"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": null
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_content",
+                    "id": 2,
+                    "parser_ops": [],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                0,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0x16",
+                            "mask": null,
+                            "next_state": "parse_signature_info"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": null
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_huge_tlv0",
+                    "id": 3,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "huge_tlv0"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_tlv0"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_nonce",
                     "id": 4,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "nonce"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                0,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0x0c",
+                            "mask": null,
+                            "next_state": "parse_lifetime"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": null
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_signature_info",
+                    "id": 5,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "signature_info"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                0,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0x17",
+                            "mask": null,
+                            "next_state": "parse_signature_value"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": null
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_huge_content",
+                    "id": 6,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "huge_content"
+                                }
+                            ]
+                        },
+                        {
+                            "op": "set",
+                            "parameters": [
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "name_metadata",
+                                        "namesize"
+                                    ]
+                                },
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "huge_content",
+                                        "tl_length"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_content"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_lifetime",
+                    "id": 7,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "lifetime"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": null
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_medium_name",
+                    "id": 8,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "medium_name"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_name"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_metainfo",
+                    "id": 9,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "metainfo"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                0,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0x15",
+                            "mask": null,
+                            "next_state": "size_content"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": null
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_medium_ndnlp",
+                    "id": 10,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "medium_ndnlp"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_ndn"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_small_ndnlp",
+                    "id": 11,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "small_ndnlp"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_ndn"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_huge_name",
+                    "id": 12,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "huge_name"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_name"
+                        }
+                    ]
+                },
+                {
+                    "name": "size_content",
+                    "id": 13,
+                    "parser_ops": [],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                8,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0xfd",
+                            "mask": null,
+                            "next_state": "parse_medium_content"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0xfe",
+                            "mask": null,
+                            "next_state": "parse_big_content"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0xff",
+                            "mask": null,
+                            "next_state": "parse_huge_content"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_small_content"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_ethernet",
+                    "id": 14,
                     "parser_ops": [
                         {
                             "op": "extract",
@@ -693,405 +1005,8 @@
                     ]
                 },
                 {
-                    "name": "parse_small_tlv0",
-                    "id": 5,
-                    "parser_ops": [
-                        {
-                            "op": "extract",
-                            "parameters": [
-                                {
-                                    "type": "regular",
-                                    "value": "small_tlv0"
-                                }
-                            ]
-                        },
-                        {
-                            "op": "set",
-                            "parameters": [
-                                {
-                                    "type": "field",
-                                    "value": [
-                                        "flow_metadata",
-                                        "packetType"
-                                    ]
-                                },
-                                {
-                                    "type": "field",
-                                    "value": [
-                                        "small_tlv0",
-                                        "tl_code"
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
-                    "transition_key": [],
-                    "transitions": [
-                        {
-                            "type": "default",
-                            "value": null,
-                            "mask": null,
-                            "next_state": "parse_tlv0"
-                        }
-                    ]
-                },
-                {
-                    "name": "parse_big_name",
-                    "id": 6,
-                    "parser_ops": [
-                        {
-                            "op": "extract",
-                            "parameters": [
-                                {
-                                    "type": "regular",
-                                    "value": "big_name"
-                                }
-                            ]
-                        }
-                    ],
-                    "transition_key": [],
-                    "transitions": [
-                        {
-                            "type": "default",
-                            "value": null,
-                            "mask": null,
-                            "next_state": "parse_name"
-                        }
-                    ]
-                },
-                {
-                    "name": "parse_content",
-                    "id": 7,
-                    "parser_ops": [],
-                    "transition_key": [
-                        {
-                            "type": "lookahead",
-                            "value": [
-                                0,
-                                8
-                            ]
-                        }
-                    ],
-                    "transitions": [
-                        {
-                            "type": "hexstr",
-                            "value": "0x16",
-                            "mask": null,
-                            "next_state": "parse_signature_info"
-                        },
-                        {
-                            "type": "default",
-                            "value": null,
-                            "mask": null,
-                            "next_state": null
-                        }
-                    ]
-                },
-                {
-                    "name": "parse_nonce",
-                    "id": 8,
-                    "parser_ops": [
-                        {
-                            "op": "extract",
-                            "parameters": [
-                                {
-                                    "type": "regular",
-                                    "value": "nonce"
-                                }
-                            ]
-                        }
-                    ],
-                    "transition_key": [
-                        {
-                            "type": "lookahead",
-                            "value": [
-                                0,
-                                8
-                            ]
-                        }
-                    ],
-                    "transitions": [
-                        {
-                            "type": "hexstr",
-                            "value": "0x0c",
-                            "mask": null,
-                            "next_state": "parse_lifetime"
-                        },
-                        {
-                            "type": "default",
-                            "value": null,
-                            "mask": null,
-                            "next_state": null
-                        }
-                    ]
-                },
-                {
-                    "name": "parse_ndn_lp",
-                    "id": 9,
-                    "parser_ops": [],
-                    "transition_key": [
-                        {
-                            "type": "lookahead",
-                            "value": [
-                                8,
-                                8
-                            ]
-                        }
-                    ],
-                    "transitions": [
-                        {
-                            "type": "hexstr",
-                            "value": "0xfd",
-                            "mask": null,
-                            "next_state": "parse_medium_ndnlp"
-                        },
-                        {
-                            "type": "default",
-                            "value": null,
-                            "mask": null,
-                            "next_state": "parse_small_ndnlp"
-                        }
-                    ]
-                },
-                {
-                    "name": "parse_signature_info",
-                    "id": 10,
-                    "parser_ops": [
-                        {
-                            "op": "extract",
-                            "parameters": [
-                                {
-                                    "type": "regular",
-                                    "value": "signature_info"
-                                }
-                            ]
-                        }
-                    ],
-                    "transition_key": [
-                        {
-                            "type": "lookahead",
-                            "value": [
-                                0,
-                                8
-                            ]
-                        }
-                    ],
-                    "transitions": [
-                        {
-                            "type": "hexstr",
-                            "value": "0x17",
-                            "mask": null,
-                            "next_state": "parse_signature_value"
-                        },
-                        {
-                            "type": "default",
-                            "value": null,
-                            "mask": null,
-                            "next_state": null
-                        }
-                    ]
-                },
-                {
-                    "name": "parse_lifetime",
-                    "id": 11,
-                    "parser_ops": [
-                        {
-                            "op": "extract",
-                            "parameters": [
-                                {
-                                    "type": "regular",
-                                    "value": "lifetime"
-                                }
-                            ]
-                        }
-                    ],
-                    "transition_key": [],
-                    "transitions": [
-                        {
-                            "type": "default",
-                            "value": null,
-                            "mask": null,
-                            "next_state": null
-                        }
-                    ]
-                },
-                {
-                    "name": "parse_medium_name",
-                    "id": 12,
-                    "parser_ops": [
-                        {
-                            "op": "extract",
-                            "parameters": [
-                                {
-                                    "type": "regular",
-                                    "value": "medium_name"
-                                }
-                            ]
-                        }
-                    ],
-                    "transition_key": [],
-                    "transitions": [
-                        {
-                            "type": "default",
-                            "value": null,
-                            "mask": null,
-                            "next_state": "parse_name"
-                        }
-                    ]
-                },
-                {
-                    "name": "parse_huge_tlv0",
-                    "id": 13,
-                    "parser_ops": [
-                        {
-                            "op": "extract",
-                            "parameters": [
-                                {
-                                    "type": "regular",
-                                    "value": "huge_tlv0"
-                                }
-                            ]
-                        }
-                    ],
-                    "transition_key": [],
-                    "transitions": [
-                        {
-                            "type": "default",
-                            "value": null,
-                            "mask": null,
-                            "next_state": "parse_tlv0"
-                        }
-                    ]
-                },
-                {
-                    "name": "parse_metainfo",
-                    "id": 14,
-                    "parser_ops": [
-                        {
-                            "op": "extract",
-                            "parameters": [
-                                {
-                                    "type": "regular",
-                                    "value": "metainfo"
-                                }
-                            ]
-                        }
-                    ],
-                    "transition_key": [
-                        {
-                            "type": "lookahead",
-                            "value": [
-                                0,
-                                8
-                            ]
-                        }
-                    ],
-                    "transitions": [
-                        {
-                            "type": "hexstr",
-                            "value": "0x15",
-                            "mask": null,
-                            "next_state": "size_content"
-                        },
-                        {
-                            "type": "default",
-                            "value": null,
-                            "mask": null,
-                            "next_state": null
-                        }
-                    ]
-                },
-                {
-                    "name": "parse_medium_ndnlp",
-                    "id": 15,
-                    "parser_ops": [
-                        {
-                            "op": "extract",
-                            "parameters": [
-                                {
-                                    "type": "regular",
-                                    "value": "medium_ndnlp"
-                                }
-                            ]
-                        }
-                    ],
-                    "transition_key": [],
-                    "transitions": [
-                        {
-                            "type": "default",
-                            "value": null,
-                            "mask": null,
-                            "next_state": "parse_ndn"
-                        }
-                    ]
-                },
-                {
-                    "name": "parse_huge_name",
-                    "id": 16,
-                    "parser_ops": [
-                        {
-                            "op": "extract",
-                            "parameters": [
-                                {
-                                    "type": "regular",
-                                    "value": "huge_name"
-                                }
-                            ]
-                        }
-                    ],
-                    "transition_key": [],
-                    "transitions": [
-                        {
-                            "type": "default",
-                            "value": null,
-                            "mask": null,
-                            "next_state": "parse_name"
-                        }
-                    ]
-                },
-                {
-                    "name": "size_content",
-                    "id": 17,
-                    "parser_ops": [],
-                    "transition_key": [
-                        {
-                            "type": "lookahead",
-                            "value": [
-                                8,
-                                8
-                            ]
-                        }
-                    ],
-                    "transitions": [
-                        {
-                            "type": "hexstr",
-                            "value": "0xfd",
-                            "mask": null,
-                            "next_state": "parse_medium_content"
-                        },
-                        {
-                            "type": "hexstr",
-                            "value": "0xfe",
-                            "mask": null,
-                            "next_state": "parse_big_content"
-                        },
-                        {
-                            "type": "hexstr",
-                            "value": "0xff",
-                            "mask": null,
-                            "next_state": "parse_huge_content"
-                        },
-                        {
-                            "type": "default",
-                            "value": null,
-                            "mask": null,
-                            "next_state": "parse_small_content"
-                        }
-                    ]
-                },
-                {
                     "name": "parse_name",
-                    "id": 18,
+                    "id": 15,
                     "parser_ops": [],
                     "transition_key": [
                         {
@@ -1125,7 +1040,7 @@
                 },
                 {
                     "name": "parse_small_content",
-                    "id": 19,
+                    "id": 16,
                     "parser_ops": [
                         {
                             "op": "extract",
@@ -1167,8 +1082,48 @@
                     ]
                 },
                 {
+                    "name": "parse_ndn",
+                    "id": 17,
+                    "parser_ops": [],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                8,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0xfd",
+                            "mask": null,
+                            "next_state": "parse_medium_tlv0"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0xfe",
+                            "mask": null,
+                            "next_state": "parse_big_tlv0"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0xff",
+                            "mask": null,
+                            "next_state": "parse_huge_tlv0"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_small_tlv0"
+                        }
+                    ]
+                },
+                {
                     "name": "parse_components",
-                    "id": 20,
+                    "id": 18,
                     "parser_ops": [
                         {
                             "op": "set",
@@ -1269,15 +1224,34 @@
                     ]
                 },
                 {
-                    "name": "parse_small_ndnlp",
-                    "id": 21,
+                    "name": "parse_small_tlv0",
+                    "id": 19,
                     "parser_ops": [
                         {
                             "op": "extract",
                             "parameters": [
                                 {
                                     "type": "regular",
-                                    "value": "small_ndnlp"
+                                    "value": "small_tlv0"
+                                }
+                            ]
+                        },
+                        {
+                            "op": "set",
+                            "parameters": [
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "flow_metadata",
+                                        "packetType"
+                                    ]
+                                },
+                                {
+                                    "type": "field",
+                                    "value": [
+                                        "small_tlv0",
+                                        "tl_code"
+                                    ]
                                 }
                             ]
                         }
@@ -1288,42 +1262,26 @@
                             "type": "default",
                             "value": null,
                             "mask": null,
-                            "next_state": "parse_ndn"
+                            "next_state": "parse_tlv0"
                         }
                     ]
                 },
                 {
-                    "name": "parse_afterName",
-                    "id": 22,
-                    "parser_ops": [],
-                    "transition_key": [
+                    "name": "parse_signature_value",
+                    "id": 20,
+                    "parser_ops": [
                         {
-                            "type": "lookahead",
-                            "value": [
-                                0,
-                                8
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "signature_value"
+                                }
                             ]
                         }
                     ],
+                    "transition_key": [],
                     "transitions": [
-                        {
-                            "type": "hexstr",
-                            "value": "0x01",
-                            "mask": null,
-                            "next_state": "parse_isha256"
-                        },
-                        {
-                            "type": "hexstr",
-                            "value": "0x0a",
-                            "mask": null,
-                            "next_state": "parse_nonce"
-                        },
-                        {
-                            "type": "hexstr",
-                            "value": "0x14",
-                            "mask": null,
-                            "next_state": "parse_metainfo"
-                        },
                         {
                             "type": "default",
                             "value": null,
@@ -1333,48 +1291,8 @@
                     ]
                 },
                 {
-                    "name": "parse_ndn",
-                    "id": 23,
-                    "parser_ops": [],
-                    "transition_key": [
-                        {
-                            "type": "lookahead",
-                            "value": [
-                                8,
-                                8
-                            ]
-                        }
-                    ],
-                    "transitions": [
-                        {
-                            "type": "hexstr",
-                            "value": "0xfd",
-                            "mask": null,
-                            "next_state": "parse_medium_tlv0"
-                        },
-                        {
-                            "type": "hexstr",
-                            "value": "0xfe",
-                            "mask": null,
-                            "next_state": "parse_big_tlv0"
-                        },
-                        {
-                            "type": "hexstr",
-                            "value": "0xff",
-                            "mask": null,
-                            "next_state": "parse_huge_tlv0"
-                        },
-                        {
-                            "type": "default",
-                            "value": null,
-                            "mask": null,
-                            "next_state": "parse_small_tlv0"
-                        }
-                    ]
-                },
-                {
                     "name": "parse_medium_tlv0",
-                    "id": 24,
+                    "id": 21,
                     "parser_ops": [
                         {
                             "op": "extract",
@@ -1416,32 +1334,8 @@
                     ]
                 },
                 {
-                    "name": "parse_signature_value",
-                    "id": 25,
-                    "parser_ops": [
-                        {
-                            "op": "extract",
-                            "parameters": [
-                                {
-                                    "type": "regular",
-                                    "value": "signature_value"
-                                }
-                            ]
-                        }
-                    ],
-                    "transition_key": [],
-                    "transitions": [
-                        {
-                            "type": "default",
-                            "value": null,
-                            "mask": null,
-                            "next_state": null
-                        }
-                    ]
-                },
-                {
                     "name": "parse_medium_content",
-                    "id": 26,
+                    "id": 22,
                     "parser_ops": [
                         {
                             "op": "extract",
@@ -1484,7 +1378,7 @@
                 },
                 {
                     "name": "parse_big_tlv0",
-                    "id": 27,
+                    "id": 23,
                     "parser_ops": [
                         {
                             "op": "extract",
@@ -1508,7 +1402,7 @@
                 },
                 {
                     "name": "parse_big_content",
-                    "id": 28,
+                    "id": 24,
                     "parser_ops": [
                         {
                             "op": "extract",
@@ -1550,8 +1444,22 @@
                     ]
                 },
                 {
+                    "name": "start",
+                    "id": 25,
+                    "parser_ops": [],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_ethernet"
+                        }
+                    ]
+                },
+                {
                     "name": "parse_tlv0",
-                    "id": 29,
+                    "id": 26,
                     "parser_ops": [],
                     "transition_key": [
                         {
@@ -1578,8 +1486,32 @@
                     ]
                 },
                 {
+                    "name": "parse_big_name",
+                    "id": 27,
+                    "parser_ops": [
+                        {
+                            "op": "extract",
+                            "parameters": [
+                                {
+                                    "type": "regular",
+                                    "value": "big_name"
+                                }
+                            ]
+                        }
+                    ],
+                    "transition_key": [],
+                    "transitions": [
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_name"
+                        }
+                    ]
+                },
+                {
                     "name": "parse_isha256",
-                    "id": 30,
+                    "id": 28,
                     "parser_ops": [
                         {
                             "op": "extract",
@@ -1620,6 +1552,74 @@
                             "next_state": null
                         }
                     ]
+                },
+                {
+                    "name": "size_name",
+                    "id": 29,
+                    "parser_ops": [],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                8,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0xfd",
+                            "mask": null,
+                            "next_state": "parse_medium_name"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0xfe",
+                            "mask": null,
+                            "next_state": "parse_big_name"
+                        },
+                        {
+                            "type": "hexstr",
+                            "value": "0xff",
+                            "mask": null,
+                            "next_state": "parse_huge_name"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_small_name"
+                        }
+                    ]
+                },
+                {
+                    "name": "parse_ndn_lp",
+                    "id": 30,
+                    "parser_ops": [],
+                    "transition_key": [
+                        {
+                            "type": "lookahead",
+                            "value": [
+                                8,
+                                8
+                            ]
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "type": "hexstr",
+                            "value": "0xfd",
+                            "mask": null,
+                            "next_state": "parse_medium_ndnlp"
+                        },
+                        {
+                            "type": "default",
+                            "value": null,
+                            "mask": null,
+                            "next_state": "parse_small_ndnlp"
+                        }
+                    ]
                 }
             ]
         }
@@ -1631,16 +1631,16 @@
             "id": 0,
             "order": [
                 "ethernet",
-                "small_ndnlp",
                 "medium_ndnlp",
-                "big_tlv0",
+                "small_ndnlp",
                 "medium_tlv0",
-                "small_tlv0",
+                "big_tlv0",
                 "huge_tlv0",
+                "small_tlv0",
                 "huge_name",
                 "big_name",
-                "medium_name",
                 "small_name",
+                "medium_name",
                 "components[0]",
                 "components[1]",
                 "components[2]",
@@ -1662,56 +1662,8 @@
     "meter_arrays": [],
     "actions": [
         {
-            "name": "rewrite_macs",
-            "id": 0,
-            "runtime_data": [
-                {
-                    "name": "dmac",
-                    "bitwidth": 48
-                },
-                {
-                    "name": "smac",
-                    "bitwidth": 48
-                }
-            ],
-            "primitives": [
-                {
-                    "op": "modify_field",
-                    "parameters": [
-                        {
-                            "type": "field",
-                            "value": [
-                                "ethernet",
-                                "dstAddr"
-                            ]
-                        },
-                        {
-                            "type": "runtime_data",
-                            "value": 0
-                        }
-                    ]
-                },
-                {
-                    "op": "modify_field",
-                    "parameters": [
-                        {
-                            "type": "field",
-                            "value": [
-                                "ethernet",
-                                "srcAddr"
-                            ]
-                        },
-                        {
-                            "type": "runtime_data",
-                            "value": 1
-                        }
-                    ]
-                }
-            ]
-        },
-        {
             "name": "computeStoreTablesIndex",
-            "id": 1,
+            "id": 0,
             "runtime_data": [],
             "primitives": [
                 {
@@ -1838,7 +1790,7 @@
         },
         {
             "name": "updatePit_entry",
-            "id": 2,
+            "id": 1,
             "runtime_data": [],
             "primitives": [
                 {
@@ -1957,8 +1909,77 @@
             ]
         },
         {
-            "name": "cleanPitEntry",
+            "name": "setOutputIface",
+            "id": 2,
+            "runtime_data": [
+                {
+                    "name": "out_iface",
+                    "bitwidth": 9
+                }
+            ],
+            "primitives": [
+                {
+                    "op": "modify_field",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "standard_metadata",
+                                "egress_spec"
+                            ]
+                        },
+                        {
+                            "type": "runtime_data",
+                            "value": 0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "_drop",
             "id": 3,
+            "runtime_data": [],
+            "primitives": [
+                {
+                    "op": "drop",
+                    "parameters": []
+                }
+            ]
+        },
+        {
+            "name": "readPitEntry",
+            "id": 4,
+            "runtime_data": [],
+            "primitives": [
+                {
+                    "op": "register_read",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "flow_metadata",
+                                "isInPIT"
+                            ]
+                        },
+                        {
+                            "type": "register_array",
+                            "value": "pit_r"
+                        },
+                        {
+                            "type": "field",
+                            "value": [
+                                "name_metadata",
+                                "name_hash"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "cleanPitEntry",
+            "id": 5,
             "runtime_data": [],
             "primitives": [
                 {
@@ -2007,19 +2028,36 @@
             ]
         },
         {
-            "name": "_drop",
-            "id": 4,
-            "runtime_data": [],
+            "name": "storeNumOfComponents",
+            "id": 6,
+            "runtime_data": [
+                {
+                    "name": "total",
+                    "bitwidth": 8
+                }
+            ],
             "primitives": [
                 {
-                    "op": "drop",
-                    "parameters": []
+                    "op": "modify_field",
+                    "parameters": [
+                        {
+                            "type": "field",
+                            "value": [
+                                "name_metadata",
+                                "components"
+                            ]
+                        },
+                        {
+                            "type": "runtime_data",
+                            "value": 0
+                        }
+                    ]
                 }
             ]
         },
         {
             "name": "set_egr",
-            "id": 5,
+            "id": 7,
             "runtime_data": [
                 {
                     "name": "egress_spec",
@@ -2056,92 +2094,6 @@
                         {
                             "type": "hexstr",
                             "value": "0x1"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "readPitEntry",
-            "id": 6,
-            "runtime_data": [],
-            "primitives": [
-                {
-                    "op": "register_read",
-                    "parameters": [
-                        {
-                            "type": "field",
-                            "value": [
-                                "flow_metadata",
-                                "isInPIT"
-                            ]
-                        },
-                        {
-                            "type": "register_array",
-                            "value": "pit_r"
-                        },
-                        {
-                            "type": "field",
-                            "value": [
-                                "name_metadata",
-                                "name_hash"
-                            ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "storeNumOfComponents",
-            "id": 7,
-            "runtime_data": [
-                {
-                    "name": "total",
-                    "bitwidth": 8
-                }
-            ],
-            "primitives": [
-                {
-                    "op": "modify_field",
-                    "parameters": [
-                        {
-                            "type": "field",
-                            "value": [
-                                "name_metadata",
-                                "components"
-                            ]
-                        },
-                        {
-                            "type": "runtime_data",
-                            "value": 0
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "setOutputIface",
-            "id": 8,
-            "runtime_data": [
-                {
-                    "name": "out_iface",
-                    "bitwidth": 9
-                }
-            ],
-            "primitives": [
-                {
-                    "op": "modify_field",
-                    "parameters": [
-                        {
-                            "type": "field",
-                            "value": [
-                                "standard_metadata",
-                                "egress_spec"
-                            ]
-                        },
-                        {
-                            "type": "runtime_data",
-                            "value": 0
                         }
                     ]
                 }
@@ -2450,38 +2402,8 @@
         {
             "name": "egress",
             "id": 1,
-            "init_table": "send_packet_table",
-            "tables": [
-                {
-                    "name": "send_packet_table",
-                    "id": 6,
-                    "match_type": "exact",
-                    "type": "simple",
-                    "max_size": 256,
-                    "with_counters": false,
-                    "direct_meters": null,
-                    "support_timeout": false,
-                    "key": [
-                        {
-                            "match_type": "exact",
-                            "target": [
-                                "standard_metadata",
-                                "egress_port"
-                            ],
-                            "mask": null
-                        }
-                    ],
-                    "actions": [
-                        "rewrite_macs",
-                        "_drop"
-                    ],
-                    "next_tables": {
-                        "rewrite_macs": null,
-                        "_drop": null
-                    },
-                    "base_default_next": null
-                }
-            ],
+            "init_table": null,
+            "tables": [],
             "conditionals": []
         }
     ],

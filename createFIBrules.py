@@ -94,7 +94,7 @@ def process_entry(entry, out_file):
     
     while i < needed:
       # table_add fib_table set_egr 2 0&&&0 0&&&0 0&&&0 0&&&0 3157158118&&&16 => 1 1
-      rule = 'table_add %s %s %d %s => %d %d\n' % (table_name, action_name, prefix_ncomp + i, masks_str, iface, needed)
+      rule = 'table_add %s %s %d %s => %d %d\n' % (table_name, action_name, prefix_ncomp + i, masks_str, iface + 1, needed)
       out_file.write(rule)
       print '\t' + rule
       i += 1
