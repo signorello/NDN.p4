@@ -1,5 +1,5 @@
 diff --git a/bin/minindn b/bin/minindn
-index fd38093..b91d2f7 100755
+index fd38093..eb52133 100755
 --- a/bin/minindn
 +++ b/bin/minindn
 @@ -1,3 +1,4 @@
@@ -129,7 +129,7 @@ index fd38093..b91d2f7 100755
      else:
          net = Mininet(topo,host=NdnHost)
  
-@@ -275,27 +306,51 @@ def execute(options):
+@@ -275,27 +306,52 @@ def execute(options):
  
      info('Setup time: ' + str(delta.seconds) + '\n')
  
@@ -176,6 +176,7 @@ index fd38093..b91d2f7 100755
 +          #h.setDefaultRoute("dev eth0 via %s" % sw_addr[i])
 +          h.setDefaultRoute("dev eth0")
 +	  h.p4_setting()
++          h.startNFD()
 +	  i+=1
 +      
 +      net.start()

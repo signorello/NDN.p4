@@ -60,27 +60,33 @@ index 385ff2a..1bf8cc7 100644
          host.cmd("ndnpingserver /ndn/edu/" + str(host) + " > ping-server &")
  
 diff --git a/ndn/ndn_host.py b/ndn/ndn_host.py
-index 15bf245..5f8acbc 100644
+index 15bf245..e2e2a04 100644
 --- a/ndn/ndn_host.py
 +++ b/ndn/ndn_host.py
-@@ -101,6 +101,8 @@ class NdnHost(Host, NdnHostCommon):
-         self.nfd = Nfd(self)
-         self.nfd.start()
+@@ -99,7 +99,6 @@ class NdnHost(Host, NdnHostCommon):
+         self.cmd("cd %s" % self.homeFolder)
  
-+	#self.p4_setting()
-+
+         self.nfd = Nfd(self)
+-        self.nfd.start()
+ 
          self.peerList = {}
  
-     def config(self, app=None, cache=None, **params):
-@@ -112,6 +114,17 @@ class NdnHost(Host, NdnHostCommon):
+@@ -112,6 +111,24 @@ class NdnHost(Host, NdnHostCommon):
  
          return r
  
++    def startNFD(self):
++        "Start NFD daemon"
++        print "Starting NFD on host " + self.name+ self.name
++        self.nfd.start()
++
 +    def p4_setting(self):
 +	# P4 setting 
-+	self.defaultIntf().rename("eth0")
-+	for off in ["rx", "tx", "sg"]:
-+            cmd = "/sbin/ethtool --offload eth0 %s off" % off
++        print "P4 setting for host " + self.name
++        # the following offload settings were included in the original demo file, I keep them even though they may not be needed.
++        name = self.defaultIntf().name
++        for off in ["rx", "tx", "sg"]:
++            cmd = "/sbin/ethtool --offload %s %s off" % (name, off)
 +            self.cmd(cmd)
 +	# P4 setting - disable IPv6
 +        self.cmd("sysctl -w net.ipv6.conf.all.disable_ipv6=1")
@@ -91,28 +97,26 @@ index 15bf245..5f8acbc 100644
          "Stop node."
          self.nfd.stop()
 diff --git a/ndn/nlsr.py b/ndn/nlsr.py
-index 2da0894..a57f0ec 100644
+index 2da0894..5ea4cd3 100644
 --- a/ndn/nlsr.py
 +++ b/ndn/nlsr.py
-@@ -21,6 +21,9 @@
+@@ -21,6 +21,8 @@
  # along with Mini-NDN, e.g., in COPYING.md file.
  # If not, see <http://www.gnu.org/licenses/>.
  
-+import traceback
 +import sys
 +
  from ndn.ndn_application import NdnApplication
  
  class Nlsr(NdnApplication):
-@@ -40,8 +43,10 @@ class Nlsr(NdnApplication):
+@@ -40,8 +42,9 @@ class Nlsr(NdnApplication):
          node.cmd("sudo sed -i 's|prefix .*netlab|prefix /ndn/edu/%s|g' %s" % (node.name, self.confFile))
  
      def start(self):
 -        NdnApplication.start(self, "nlsr -d")
 -
 +        # NdnApplication.start(self, "nlsr -d")
-+	# traceback.print_stack(file=sys.stdout)
-+	print("I don't start the application")
++	print("I don't start the NLSR daemon on the host")
 +	
  class NlsrConfigGenerator:
  
