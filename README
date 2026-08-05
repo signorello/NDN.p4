@@ -1,3 +1,7 @@
+This repository contains the code for an early academic exploration into implementing NDN data-plane logic using P4. The work was conducted when P4 was still in its infancy (P4_14) and before any commercial P4-programmable target was available on the market. 
+
+The project was discontinued shortly after its initial publication, and this repository is no longer maintained. It is preserved here strictly for archival reference.
+
 Requirements
 -----------------------------------------
 

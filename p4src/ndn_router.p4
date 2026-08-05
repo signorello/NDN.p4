@@ -163,7 +163,7 @@ table fib_table {
     }
 }
 
-// by now there is no cache
+// the current control flow does not include caching of Data pkts
 control ingress {
     apply(count_table);
     if (name_metadata.components != 0) {

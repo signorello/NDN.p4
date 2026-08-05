@@ -31,8 +31,6 @@ action storeNumOfComponents(total) {
 }
 
 action computeStoreTablesIndex() {
-    // watch out: if you use 0 as last parameter (size),
-    // you will end up with undefined behavior for the operation (hash % 0)
     modify_field_with_hash_based_offset(name_metadata.name_hash, 0,name_hash, 65536);
     computeNameHashes();
 }
@@ -62,7 +60,7 @@ action readPit() {
 }
 
 action updatePit_entry(){
-    // AND the actual iface list with the ingress port to check if the the router has already received a similar packet from the same incoming iface (this tmp value is not used yet)
+    // AND the actual iface list with the ingress port to check if the the router has already received a similar packet from the same incoming iface (this tmp value is currently not used)
     modify_field(pit_metadata.tmp, flow_metadata.isInPIT & (1 << standard_metadata.ingress_port));
     // update the iface list to store the new iface
     modify_field(flow_metadata.isInPIT, flow_metadata.isInPIT | (1 << standard_metadata.ingress_port));
@@ -70,9 +68,8 @@ action updatePit_entry(){
 }
 
 action setOutputIface(out_iface) {
-    // I have the interfaces stored as mask of bit in flow_metadata.isInPIT, then I'll instrument the compiler to decode this mask of bit and replicate as many packets as necessary
-    // modify_field(standard_metadata.egress_spec, flow_metadata.isInPIT);
-    // currently hard-coded values limited to 8 output interfaces - from 0 to 7
+    // interfaces are stored as a bitmask in flow_metadata.isInPIT, but the current version does not multicast packets if multiple interfaces are present in the bitmask
+    // currently hard-coded values are limited to 8 output interfaces (iface numbers from 0 to 7)
     modify_field(standard_metadata.egress_spec, out_iface);
 }
 
