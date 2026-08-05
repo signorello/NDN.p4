@@ -15,27 +15,24 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with NDN.p4.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 // The following header definition follows the packet specification 0.2-alpha-3 that can be read at
-// http://named-data.net/
+// https://named-data.net/
 
 #define NAME_HASH_SIZE 32;
 
-/* GENERAL NOTES
-1) metadata cannot be used to store the name component, because they cannot store variable length field
-*/
 
-
-/*************************************/
-//              METADATA	     //
-/*************************************/
+//*************************************//
+//              METADATA	       //
+//*************************************//
 
 header_type name_metadata_t {
     fields{
 	name_hash : 16;
-	namesize : 8;
-	namemask : 16;
-	tmp : 8;
-	components : 8;
+	name_size : 8;
+	name_mask : 16;
+	comp_len  : 8;
+	components  : 8;
     }
 }
 
@@ -45,15 +42,6 @@ header_type components_metadata_t {
 	c2 : 16;
 	c3 : 16;
 	c4 : 16;
-    }
-}
-
-header_type stupid_metadata_t {
-    fields{
-	small_mask : 64;
-        medium_mask : 64;
-	big_mask : 64;
-	huge_mask : 64;
     }
 }
 
@@ -75,7 +63,7 @@ metadata name_metadata_t name_metadata;
 metadata flow_metadata_t flow_metadata;
 metadata ingress_metadata_t pit_metadata;
 metadata components_metadata_t comp_metadata;
-//metadata stupid_metadata_t stupid_metadata { small_mask : 0x00000000000000ff; medium_mask : 0x00000000000000ff; big_mask : 0x00000000000000ff; huge_mask : 0xffffffffffffffff;};
+
 /*************************************/
 //              HEADERS              //
 /*************************************/
@@ -88,18 +76,23 @@ header_type ethernet_t {
     }
 }
 
-header_type dumbHeaderSmall_t {
+// The following two header definitions are meant to extract
+// two possible NDNLP headers into fixed-size blocks
+header_type block_112b_t {
     fields {
 	total : 112;
     }
 }
 
-header_type dumbHeaderMedium_t {
+header_type block_144b_t {
     fields {
 	total : 144;
     }
 }
 
+// this fixedTLV_t header is meant to extract TLV fields
+// whose length encoding is 1B and which contains actual values (and not nested TLVs).
+// This header is used to extract name components, for instance.
 header_type fixedTLV_t {
   fields{
       tlv_code : 8;
@@ -110,6 +103,8 @@ header_type fixedTLV_t {
   max_length : 255;
 }
 
+// the four following headers are meant to represent the
+// variable-size encoding format of the TLV Length field
 header_type smallTL_t {
   fields{
     tl_code : 8;

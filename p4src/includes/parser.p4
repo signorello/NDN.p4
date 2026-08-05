@@ -15,12 +15,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with NDN.p4.  If not, see <http://www.gnu.org/licenses/>.
 */
-// Define for the encoding of the length of a TLV block
+// Define for the encoding of the Length field of a TLV block
 #define ENCODING_2BYTE         0xFD
 #define ENCODING_4BYTE         0xFE
 #define ENCODING_8BYTE         0xFF
 
-// Define for ethertype and type codes
+// Define for ethertype and NDN type codes
 #define ETHERTYPE_NDN          0x8624 // code used by the NFD daemon
 #define NDNTYPE_INT	       0x05 
 #define NDNTYPE_DAT	       0x06 
@@ -60,6 +60,7 @@ parser parse_ethernet {
     return select(ethernet.etherType, current(0,8)) {
         0x862450 mask 0xffffff : parse_ndn_lp;
         0x862450 mask 0xffff00 : parse_ndn;
+	default : ingress;
     }
 
 }
@@ -71,8 +72,8 @@ parser parse_ndn_lp {
     }
 }
 
-header dumbHeaderSmall_t small_ndnlp;
-header dumbHeaderMedium_t medium_ndnlp;
+header block_112b_t small_ndnlp;
+header block_144b_t medium_ndnlp;
 
 parser parse_small_ndnlp {
     extract(small_ndnlp);
@@ -85,7 +86,6 @@ parser parse_medium_ndnlp {
 }
 
 parser parse_ndn {
-    //set_metadata(flow_metadata.packetType, current(0,8));
     return select(current(8,8)) {
 	ENCODING_2BYTE : parse_medium_tlv0;
 	ENCODING_4BYTE : parse_big_tlv0;
@@ -102,23 +102,23 @@ header hugeTL_t huge_tlv0;
 parser parse_small_tlv0 {
     extract(small_tlv0);
     set_metadata(flow_metadata.packetType, small_tlv0.tl_code);
-    return parse_tlv0;
+    return parse_v0;
 }
 parser parse_medium_tlv0 {
     extract(medium_tlv0);
     set_metadata(flow_metadata.packetType, medium_tlv0.tl_code);
-    return parse_tlv0;
+    return parse_v0;
 }
 parser parse_big_tlv0 {
     extract(big_tlv0);
-    return parse_tlv0;
+    return parse_v0;
 }
 parser parse_huge_tlv0 {
     extract(huge_tlv0);
-    return parse_tlv0;
+    return parse_v0;
 }
 
-// by now a name is the only TLV that can follow the TLV0, but we include the check anyway
+// Checking the next type, even if a name is the only TLV-type that can follow the TLV0
 parser parse_tlv0 {
     return select(current(0,8)) {
 	NDNTYPE_NAM : size_name;
@@ -140,35 +140,34 @@ header mediumTL_t medium_name;
 header bigTL_t big_name;
 header hugeTL_t huge_name;
 
+// the current impl. assumes that name components cannot have a lenght encoding greater than 1B.
+// however, it includes as comments an untested mechanism to deal with variable encoding of 
+// this field. Be aware that such a mechanim would also require changes to the corresponding metadata definitions to work.
+
 parser parse_small_name {
-    set_metadata(name_metadata.namesize, current(8,8));
+    set_metadata(name_metadata.name_size, current(8,8));
     extract(small_name);
-    //set_metadata(name_metadata.namesize, small_name.tl_length);
-    //set_metadata(name_metadata.namemask, 0x00ff);
-    //set_metadata(name_metadata.namemask, stupid_metadata.small_mask);
+    //set_metadata(name_metadata.name_size, small_name.tl_length);
+    //set_metadata(name_metadata.name_mask, 0x00ff);
     return parse_name;
 }
 parser parse_medium_name {
     extract(medium_name);
-    //set_metadata(name_metadata.namesize, medium_name.tl_length);
-    //set_metadata(name_metadata.namemask, 0xffff);
-    //set_metadata(name_metadata.namemask, stupid_metadata.medium_mask);
+    //set_metadata(name_metadata.name_size, medium_name.tl_length);
+    //set_metadata(name_metadata.name_mask, 0xffff);
     return parse_name;
 }
 parser parse_big_name {
     extract(big_name);
-    //set_metadata(name_metadata.namesize, big_name.tl_length);
-    //set_metadata(name_metadata.namemask, stupid_metadata.big_mask);
+    //set_metadata(name_metadata.name_size, big_name.tl_length);
     return parse_name;
 }
 parser parse_huge_name {
     extract(huge_name);
-    //set_metadata(name_metadata.namesize, huge_name.tl_length);
-    //set_metadata(name_metadata.namemask, stupid_metadata.huge_mask);
+    //set_metadata(name_metadata.name_size, huge_name.tl_length);
     return parse_name;
 }
 
-// we assume that component cannot have a tlv_length bigger than 1B
 parser parse_name {
     return select(current(0,8)) {
 	NDNTYPE_COM : parse_components; 
@@ -181,13 +180,13 @@ parser parse_name {
 header fixedTLV_t components[MAX_NAME_COMPONENTS];
 
 parser parse_components {
-    set_metadata(name_metadata.tmp, current(8,8) );
+    set_metadata(name_metadata.comp_len, current(8,8) );
     extract(components[next]);
-    set_metadata(name_metadata.namesize, name_metadata.namesize - name_metadata.tmp - 2); // the last '2' subtracts the T and L for this TLV block
-    //set_metadata(name_metadata.namesize, (name_metadata.namesize & name_metadata.namemask) - name_metadata.tmp);
-//set_metadata(name_metadata.namesize, (name_metadata.namesize & name_metadata.namemask) - components[last].tlv_length);
+    set_metadata(name_metadata.name_size, name_metadata.name_size - name_metadata.comp_len - 2); // the last '2' subtracts the T and L for this TLV block
+    //set_metadata(name_metadata.name_size, (name_metadata.name_size & name_metadata.name_mask) - name_metadata.comp_len);
+//set_metadata(name_metadata.name_size, (name_metadata.name_size & name_metadata.name_mask) - components[last].tlv_length);
     // beware: we're omitting to check isha256
-    return select(name_metadata.namesize) {
+    return select(name_metadata.name_size) {
 	0 : parse_afterName;
 	default : parse_components;                     
     }
@@ -255,27 +254,27 @@ header hugeTL_t huge_content;
 
 parser parse_small_content {
     extract(small_content);
-    set_metadata(name_metadata.namesize, small_content.tl_length);
+    //set_metadata(name_metadata.name_size, small_content.tl_length);
     return parse_content;
 }
 parser parse_medium_content {
     extract(medium_content);
-    set_metadata(name_metadata.namesize, medium_content.tl_length);
+    //set_metadata(name_metadata.name_size, medium_content.tl_length);
     return parse_content;
 }
 parser parse_big_content {
     extract(big_content);
-    set_metadata(name_metadata.namesize, big_content.tl_length);
+    //set_metadata(name_metadata.name_size, big_content.tl_length);
     return parse_content;
 }
 parser parse_huge_content {
     extract(huge_content);
-    set_metadata(name_metadata.namesize, huge_content.tl_length);
+    //set_metadata(name_metadata.name_size, huge_content.tl_length);
     return parse_content;
 }
 
 parser parse_content{
-    //jump(name_metadata.namesize); // not implemented yet
+    //jump(name_metadata.name_size); // construct not implemented yet by the lang.
     return select(current(0,8)) {
 	NDNTYPE_SIG : parse_signature_info;
 	default : parse_error p4_pe_default;
@@ -300,8 +299,8 @@ parser parse_signature_value{
     return ingress;
 }
 
-// I'll probably move the exceptions definitions into a separate file
+// TODO: move the exceptions definition into a separate file
 parser_exception p4_pe_default {
-    // do something, like increment a counter to keep trace of the dropped packets
+    // TODO: increment a counter to keep trace of the dropped packets
     parser_drop;
 }
